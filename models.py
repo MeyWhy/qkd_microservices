@@ -57,6 +57,7 @@ class SessionStartResp(BaseModel):
     n_sifted: int
     qber: float
     key_final:str #TODO to be changed to its hash for more secu
+    latency:float
     error_message: str=""
 
 class SiftReq(BaseModel):

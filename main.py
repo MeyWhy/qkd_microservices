@@ -7,12 +7,15 @@ import os
 from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI, HTTPException
+from celery import group, chain, chord
+from celery.result import AsyncResult
+from workers.qubit_tasks   import send_qubit_task
+from workers.sifting_tasks import sifting_task, qber_key_task
+from workers.celery_config import celery_app
 from models import (
     Basis, new_session_id,
     SessionStartReq, SessionStartResp,
     NetworkInitReq,
-    SendQubitReq,
-    SiftReq,
     BB84Error, ErrorCode,)
 from bb84_logic import (
     perform_sifting, compute_qber,
@@ -24,8 +27,8 @@ logging.basicConfig(level=logging.INFO)
 
 QNS_URL=os.getenv("QNS_URL", "http://localhost:8003")
 BOB_URL=os.getenv("BOB_URL", "http://localhost:8002")
-QUBIT_SEND_TIMEOUT=10.0
 HTTP_TIMEOUT=30.0
+
 _sessions:dict[str,dict]={}
 _lock=threading.Lock()
 
@@ -40,145 +43,113 @@ async def lifespan(app: FastAPI):
 app=FastAPI(
     title="Alice Service",
     description="Transmitter BB84",
+    version="0.4.0",
     lifespan=lifespan,)
 
-async def _call(client: httpx.AsyncClient, method: str, url: str, **kwargs) -> httpx.Response:
+async def _http_post(client: httpx.AsyncClient, url: str, **kwargs) -> httpx.Response:
     try:
-        resp=await getattr(client, method)(url, **kwargs)
+        resp=await client.post(url, **kwargs)
         resp.raise_for_status()
         return resp
     except httpx.HTTPStatusError as e:
         raise HTTPException(
             status_code=502,
-            detail=f"Appel {method.upper()} {url} -> {e.response.status_code}: "f"{e.response.text[:200]}",)
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=503,
-            detail=f"Service indisponible ({url}): {e}",)
-    
+            detail=f"Appel POST {url} -> {e.response.status_code}: "f"{e.response.text[:200]}",)
+
+
+def _wait_for_result(task_id: str, timeout:float=180.0)-> dict:
+    result=AsyncResult(task_id, app=celery_app)
+    return result.get(timeout=timeout, propagate=True)
+
+
 @app.post("/session/start", response_model=SessionStartResp)
 async def start_session(req: SessionStartReq):
     session_id=new_session_id()
     n=req.n_qubits
     t_start=time.time()
  
-    logger.info(f"[Alice] Starting session {session_id} ({n} qubits)")
+    logger.info(f"[Alice] Starting session {session_id} ({n} qubits (Celery))")
 
     async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
-        await _call(client, "post", f"{QNS_URL}/network/init",
+        await _http_post(client, f"{QNS_URL}/network/init",
                     json=NetworkInitReq(session_id=session_id,
                         n_qubits=n,
                     ).model_dump())
         logger.info(f"[Alice] QNS initialized")
-        await _call(client, "post", f"{BOB_URL}/session/register",
+
+        await _http_post(client, f"{BOB_URL}/session/register",
                     params={"session_id": session_id})
         logger.info(f"[Alice] Bob registered")
+
         bits=[random.randint(0, 1) for _ in range(n)]
         bases=[random.choice(list(Basis)) for _ in range(n)]
-        n_delivered=0
-        t_send=time.time()
- 
-        for i in range(n):
-            resp=await _call(
-                client, "post", f"{QNS_URL}/qubit/send",
-                json=SendQubitReq(session_id=session_id,
-                    qubit_id=i,
-                    bit=bits[i],
-                    basis=bases[i],
-                ).model_dump(),)
-            if resp.json().get("delivered"):
-                n_delivered+=1
- 
-        t_send_elapsed=time.time()-t_send
-        logger.info(
-            f"[Alice] {n_delivered}/{n} qubits delivered "f"en {t_send_elapsed:.2f}s") 
         
-        alice_bases_payload=[(i, bases[i]) for i in range(n)]
+        session_meta={"session_id": session_id, "n_qubits":n}
  
-        sift_resp=await _call(
-            client, "post", f"{BOB_URL}/sift",
-            json=SiftReq(session_id=session_id,
-                alice_bases=alice_bases_payload,
-            ).model_dump(),
-        )
-        sift_data=sift_resp.json()
-        bob_bases=sift_data["bob_bases"]
- 
-        bob_bits_resp=await _call(
-            client, "get",f"{BOB_URL}/session/{session_id}/sifted-bits",)
-        bob_sifted=bob_bits_resp.json()["sifted_bits"]
- 
-        bob_bases_map={qid: Basis(b) for qid, b in bob_bases}
-        alice_sifted=[bits[qid]
-            for qid, bob_basis in sorted(bob_bases_map.items())
-            if qid < len(bases) and bases[qid]==bob_basis]
-        
-        n_sifted=len(alice_sifted)
-        logger.info(f"[Alice] Sifting : {n_sifted} bits retained")
-    
-        if n_sifted < 10:
-            await _stop(client, session_id)
-            return SessionStartResp(
+        qubit_group=group(
+            send_qubit_task.s(
                 session_id=session_id,
-                statut="aborted",
-                n_qubits_sent=n,
-                n_qubits_received=n_delivered,
-                n_sifted=n_sifted,
-                qber=1.0,
-                key_final="",
-                error_message=ErrorCode.INSUFFICIENT_BITS,)
-        sample_seed = random.randint(0, 2**31)
-        qber, alice_final, bob_final_expected=compute_qber(
-            alice_sifted, bob_sifted, sample_seed=sample_seed
-        )
-        logger.info(f"[Alice] QBER={qber*100:.2f}%")
-        key_str = "".join(map(str, alice_final))
-        if qber > QBER_THRESHOLD:
-            await _stop(client, session_id)
-            return SessionStartResp(
-                session_id=session_id,
-                statut="aborted",
-                n_qubits_sent=n,
-                n_qubits_received=n_delivered,
-                n_sifted=n_sifted,
-                qber=qber,
-                key_final=key_str,
-                error_message=ErrorCode.QBER_TOO_HIGH,
+                qubit_id=i,
+                bit=bits[i],
+                basis=bases[i].value,
+                ) for i in range(n)
             )
- 
-        elapsed=time.time()-t_start
- 
-        logger.info(f"[Alice] Session {session_id} finished in {elapsed:.2f}s "f"— key: {alice_final}...")
-        with _lock:
-            _sessions[session_id]={
-                "key_hash": alice_final,
-                "qber": qber,
-                "n_sifted": n_sifted,
-                "elapsed": elapsed,}
-
-        await _stop(client, session_id)
-  
-        return SessionStartResp(
-            session_id=session_id,
-            statut="success",
-            n_qubits_sent=n,
-            n_qubits_received=n_delivered,
-            n_sifted=n_sifted,
-            qber=qber,
-            key_final=key_str,
+        pipeline=chord(qubit_group)(
+            chain(
+                sifting_task.s(session_meta=session_meta),
+                qber_key_task.s(),
+            )
+        )
+        logger.info(
+            f"[Alice] Pipeline Celery started -- "
+            f"task_id={pipeline.id}"
         )
 
-async def _stop(client: httpx.AsyncClient, session_id: str):
+    loop= asyncio.get_event_loop()
     try:
-        await client.post(
-            f"{QNS_URL}/network/stop",
-            json={"session_id": session_id},
-            timeout=5.0,
-        )
-        await client.delete(
-            f"{BOB_URL}/session/{session_id}",
-            timeout=5.0,
-        )
+        final=await loop.run_in_executor(None, _wait_for_result, pipeline.id, 180.0)
+    
+    except Exception as e:
+        logger.error(f"[Alice] Pipeline failed: {e}")
+        # Cleanup best-effort
+        await _stop(session_id)
+        raise HTTPException(status_code=500, detail=str(e))
+
+    elapsed=time.time()-t_start
+    logger.info(
+        f"[Alice] Session terminated in {elapsed:.2f}s — "
+        f"statut={final.get('statut')}"
+    )
+    
+    await _stop(session_id)
+    key = final.get("key_final", "")
+    if isinstance(key, list):
+        key= "".join(map(str, key))
+    
+    with _lock:
+        _sessions[session_id]={**final, "elapsed":elapsed}
+    statut = final.get("statut", "aborted")
+    return SessionStartResp(
+        session_id=session_id,
+        statut=statut,
+        n_qubits_sent=n,
+        n_qubits_received=final.get("n_delivered", 0),
+        n_sifted=final.get("n_sifted", 0),
+        qber=final.get("qber", 1.0),
+        key_final=key,
+        latency=elapsed,
+        error_message=final.get("error_message", ""),
+    )
+ 
+
+async def _stop(session_id: str):
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            await client.post(
+                f"{QNS_URL}/network/stop",
+                json={"session_id": session_id},)
+            await client.delete(
+                f"{BOB_URL}/session/{session_id}",)
     except Exception as e:
         logger.warning(f"[Alice] stop partiel: {e}")
 
@@ -194,8 +165,20 @@ async def get_session(session_id: str):
  
 @app.get("/health")
 async def health():
-    return {"statut": "ok", "service": "alice",
-            "qns_url": QNS_URL, "bob_url": BOB_URL}
+    #verif connexion Redis/Celery
+    try:
+        celery_app.control.inspect(timeout=1.0).active()
+        celery_ok = True
+    except Exception:
+        celery_ok = False
+ 
+    return {
+        "statut": "ok",
+        "celery": celery_ok,
+        "qns_url": QNS_URL,
+        "bob_url": BOB_URL,
+    }
+
  
 
 

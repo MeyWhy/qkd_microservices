@@ -101,6 +101,7 @@ async def lifespan(app: FastAPI):
 app=FastAPI(
     title="Quantum Network Service",
     description="QuNetSim wrapper for BB84",
+    version="0.3.0",
     lifespan=lifespan,
 ) 
 @app.post("/network/init", response_model=NetworkInitResp)

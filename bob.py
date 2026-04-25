@@ -29,6 +29,7 @@ async def lifespan(app: FastAPI):
 app=FastAPI(
     title="Bob Service",
     description="Receiver BB84",
+    version="0.3.0",
     lifespan=lifespan,
 )
 @app.post("/session/register")
