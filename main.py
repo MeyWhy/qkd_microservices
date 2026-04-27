@@ -1,187 +1,245 @@
 import asyncio
 import logging
-import random
-import threading
 import time
 import os
 from contextlib import asynccontextmanager
 import httpx
-from fastapi import FastAPI, HTTPException
-from celery import group, chain, chord
-from celery.result import AsyncResult
-from workers.qubit_tasks   import send_qubit_task
-from workers.sifting_tasks import sifting_task, qber_key_task
-from workers.celery_config import celery_app
-from models import (
-    Basis, new_session_id,
-    SessionStartReq, SessionStartResp,
-    NetworkInitReq,
-    BB84Error, ErrorCode,)
-from bb84_logic import (
-    perform_sifting, compute_qber,
-    QBER_THRESHOLD,)
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from state_machine import(
+    OrchestratorSession, SessionStatus,
+    SessionStartRequest, SessionStatusResponse,
+    session_to_response, new_session_id, TransitionError,)
+from models import NetworkInitReq
+from orch_store import (get_redis, save_orch_session, load_orch_session,
+    update_orch_session, list_active_sessions, list_all_sessions,)
 
-
-logger=logging.getLogger("alice")
+logger=logging.getLogger("orchestrator")
 logging.basicConfig(level=logging.INFO)
 
 QNS_URL=os.getenv("QNS_URL", "http://localhost:8003")
 BOB_URL=os.getenv("BOB_URL", "http://localhost:8002")
+ALICE_URL = os.getenv("ALICE_URL", "http://localhost:8001")
 HTTP_TIMEOUT=30.0
-
-_sessions:dict[str,dict]={}
-_lock=threading.Lock()
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("[Alice] Service started")
+    logger.info("[Orch] Service started")
     yield
-    logger.info("[Alice] Service stopped")
+    logger.info("[Orch] Service stopped")
 
  
 app=FastAPI(
-    title="Alice Service",
-    description="Transmitter BB84",
-    version="0.4.0",
+    title="Orchestrator",
+    description="Orchestrator BB84",
+    version="0.6.0",
     lifespan=lifespan,)
 
-async def _http_post(client: httpx.AsyncClient, url: str, **kwargs) -> httpx.Response:
+async def _http(method: str, url: str, client: httpx.AsyncClient,  **kwargs) -> dict:
     try:
-        resp=await client.post(url, **kwargs)
+        resp=await getattr(client, method)(url, **kwargs)
         resp.raise_for_status()
-        return resp
+        return resp.json()
     except httpx.HTTPStatusError as e:
         raise HTTPException(
             status_code=502,
-            detail=f"Appel POST {url} -> {e.response.status_code}: "f"{e.response.text[:200]}",)
+            detail=f"Appel {method.upper()} {url} -> {e.response.status_code}: "f"{e.response.text[:200]}",)
 
-
-def _wait_for_result(task_id: str, timeout:float=180.0)-> dict:
-    result=AsyncResult(task_id, app=celery_app)
-    return result.get(timeout=timeout, propagate=True)
-
-
-@app.post("/session/start", response_model=SessionStartResp)
-async def start_session(req: SessionStartReq):
-    session_id=new_session_id()
-    n=req.n_qubits
-    t_start=time.time()
- 
-    logger.info(f"[Alice] Starting session {session_id} ({n} qubits (Celery))")
-
-    async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
-        await _http_post(client, f"{QNS_URL}/network/init",
-                    json=NetworkInitReq(session_id=session_id,
-                        n_qubits=n,
-                    ).model_dump())
-        logger.info(f"[Alice] QNS initialized")
-
-        await _http_post(client, f"{BOB_URL}/session/register",
-                    params={"session_id": session_id})
-        logger.info(f"[Alice] Bob registered")
-
-        bits=[random.randint(0, 1) for _ in range(n)]
-        bases=[random.choice(list(Basis)) for _ in range(n)]
-        
-        session_meta={"session_id": session_id, "n_qubits":n}
- 
-        qubit_group=group(
-            send_qubit_task.s(
-                session_id=session_id,
-                qubit_id=i,
-                bit=bits[i],
-                basis=bases[i].value,
-                ) for i in range(n)
-            )
-        pipeline=chord(qubit_group)(
-            chain(
-                sifting_task.s(session_meta=session_meta),
-                qber_key_task.s(),
-            )
-        )
-        logger.info(
-            f"[Alice] Pipeline Celery started -- "
-            f"task_id={pipeline.id}"
-        )
-
-    loop= asyncio.get_event_loop()
+def _abort(r, session:OrchestratorSession, msg:str)-> OrchestratorSession:
     try:
-        final=await loop.run_in_executor(None, _wait_for_result, pipeline.id, 180.0)
-    
-    except Exception as e:
-        logger.error(f"[Alice] Pipeline failed: {e}")
-        # Cleanup best-effort
-        await _stop(session_id)
-        raise HTTPException(status_code=500, detail=str(e))
+        session.transition(SessionStatus.ABORTED)
+    except TransitionError:
+        session.status=SessionStatus.ABORTED
+    session.error_message=msg
+    session.completed_at=time.time()
+    update_orch_session(r, session)
+    return session
 
-    elapsed=time.time()-t_start
-    logger.info(
-        f"[Alice] Session terminated in {elapsed:.2f}s — "
-        f"statut={final.get('statut')}"
-    )
+
+async def _run_session(session_id: str)-> None:
+    r=get_redis()
+    session=load_orch_session(r,session_id)
+    if not session:
+        logger.error(f"[Orch] Session {session_id} introuvable au démarrage")
+        return
     
-    await _stop(session_id)
-    key = final.get("key_final", "")
-    if isinstance(key, list):
-        key= "".join(map(str, key))
+    async with httpx.AsyncClient(timeout=HTTP_TIMEOUT)as client:
+        #init network here
+        try:
+            await _http("post", f"{QNS_URL}/network/init", client, 
+                       json=NetworkInitReq(
+                           session_id=session_id, n_qubits=session.n_qubits, loss_rate=session.loss_rate,
+                       ).model_dump())
+            logger.info(f"[Orch] QNS initialisé — session {session_id}")
+        except HTTPException as e:
+            _abort(r, session, f"QNS init failed: {e.detail}")
+            return
+
+        #record bob
+        try:
+            await _http("post", f"{BOB_URL}/session/register", client, params={"session_id":session_id})
+        except HTTPException as e:
+            _abort(r, session, f"Bob register failed: {e.detail}")
+            return 
     
-    with _lock:
-        _sessions[session_id]={**final, "elapsed":elapsed}
-    statut = final.get("statut", "aborted")
-    return SessionStartResp(
+        #send transition
+        session.transition(SessionStatus.SENDING)
+        update_orch_session(r,session)
+
+        #lancer pipeline alice
+        try:
+            emit_data=await _http("post", f"{ALICE_URL}/emit", client,
+                json={
+                    "session_id": session_id,
+                    "n_qubits": session.n_qubits,
+                    "batch_size": session.batch_size,
+                    "loss_rate": session.loss_rate,
+                })
+            session.celery_task_id=emit_data.get("celery_task_id")
+            update_orch_session(r,session)
+            logger.info(
+                f"[Orch] Pipeline started session={session_id} "
+                f"task={session.celery_task_id}"
+            )
+        except HTTPException as e:
+            _abort(r, session, f"Alice emit failed: {e.detail}")
+            return
+        
+
+@app.post("/session/start", response_model=SessionStatusResponse)
+async def start_session(req: SessionStartRequest, background_tasks:BackgroundTasks):
+    session_id=new_session_id()
+    r = get_redis()
+    session=OrchestratorSession(
         session_id=session_id,
-        statut=statut,
-        n_qubits_sent=n,
-        n_qubits_received=final.get("n_delivered", 0),
-        n_sifted=final.get("n_sifted", 0),
-        qber=final.get("qber", 1.0),
-        key_final=key,
-        latency=elapsed,
-        error_message=final.get("error_message", ""),
+        n_qubits=req.n_qubits,
+        batch_size=req.batch_size,
+        loss_rate=req.loss_rate,
     )
- 
+    session.transition(SessionStatus.INITIALIZING)
+    save_orch_session(r, session)
+    
+    background_tasks.add_task(_run_session, session_id)
 
-async def _stop(session_id: str):
+ 
+    logger.info(f"[Orch] Session {session_id} created ({req.n_qubits} qubits)")
+    return session_to_response(session)
+
+
+@app.get("/session/{session_id}", response_model=SessionStatusResponse)
+async def get_session_status(session_id: str):
+    r = get_redis()
+    session = load_orch_session(r, session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return session_to_response(session)
+
+
+@app.post("/session/{session_id}/complete")
+async def complete_session(session_id: str, result: dict):
+
+    r = get_redis()
+    session = load_orch_session(r, session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    # Idempotence : déjà terminé
+    if session.is_terminal:
+        logger.info(f"[Orch] Session {session_id} already finished == ignored")
+        return {"status": "already_complete"}
+
+    #transition vers sift
+    try:
+        if session.status == SessionStatus.SENDING:
+            session.transition(SessionStatus.SIFTING)
+    except TransitionError:
+        pass
+
+    #transition finale depending on res
+    status = result.get("status", "aborted")
+    if status == "success":
+        session.transition(SessionStatus.DONE)
+        session.key_final   = result.get("key_final", "")
+        session.qber       = result.get("qber", 0.0)
+        session.n_sifted   = result.get("n_sifted", 0)
+        session.n_delivered = result.get("n_delivered", 0)
+    else:
+        session.transition(SessionStatus.ABORTED)
+        session.error_message = result.get("error_message", "Erreur inconnue")
+        session.qber = result.get("qber", 1.0)
+
+    update_orch_session(r, session)
+
+    #stop qnd in bg (best-effort)
+    asyncio.create_task(_stop_qns(session_id))
+
+    logger.info(
+        f"[Orch] Session {session_id} → {session.status.value} "
+        f"QBER={session.qber*100:.1f}% "
+        f"key={session.key_final[:16] if session.key_final else 'none'}..."
+    )
+    return {"status": "acknowledged", "session_id": session_id}
+
+
+
+async def _stop_qns(session_id: str) -> None:
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             await client.post(
                 f"{QNS_URL}/network/stop",
-                json={"session_id": session_id},)
-            await client.delete(
-                f"{BOB_URL}/session/{session_id}",)
+                json={"session_id": session_id},
+            )
+            await client.delete(f"{BOB_URL}/session/{session_id}")
     except Exception as e:
-        logger.warning(f"[Alice] stop partiel: {e}")
+        logger.warning(f"[Orch] Teardown partiel {session_id}: {e}")
 
- 
-@app.get("/session/{session_id}")
-async def get_session(session_id: str):
-    with _lock:
-        session=_sessions.get(session_id)
+
+@app.delete("/session/{session_id}")
+async def cancel_session(session_id: str):
+    r = get_redis()
+    session = load_orch_session(r, session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
-    return {"session_id": session_id, **session}
- 
- 
+        raise HTTPException(status_code=404, detail="Session introuvable")
+
+    if session.is_terminal:
+        return {"status": "already_terminal", "session_id": session_id}
+
+    _abort(r, session, "Annulé par l'utilisateur")
+    asyncio.create_task(_stop_qns(session_id))
+
+    logger.info(f"[Orch] Session {session_id}  cancelled")
+    return {"status": "cancelled", "session_id": session_id}
+
+
+
+@app.get("/sessions")
+async def list_sessions(active_only: bool = True):
+    r = get_redis()
+    ids = list_active_sessions(r) if active_only else list_all_sessions(r)
+    sessions = []
+    for sid in ids:
+        s = load_orch_session(r, sid)
+        if s:
+            sessions.append(session_to_response(s).model_dump())
+    return {"sessions": sessions, "count": len(sessions)}
+
+
+
 @app.get("/health")
 async def health():
-    #verif connexion Redis/Celery
+    r = get_redis()
     try:
-        celery_app.control.inspect(timeout=1.0).active()
-        celery_ok = True
+        r.ping()
+        redis_ok = True
     except Exception:
-        celery_ok = False
- 
+        redis_ok = False
+    active = list_active_sessions(r)
     return {
-        "statut": "ok",
-        "celery": celery_ok,
-        "qns_url": QNS_URL,
-        "bob_url": BOB_URL,
+        "status":          "ok",
+        "redis":           redis_ok,
+        "active_sessions": len(active),
     }
 
- 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001, log_level="warning")
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

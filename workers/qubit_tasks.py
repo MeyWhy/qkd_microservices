@@ -1,69 +1,63 @@
 import os 
 import httpx
 import logging
-from celery import Task
- 
 from workers.celery_config import celery_app
-from models import SendQubitReq, Basis
+from models import QubitBatch
 
-logger=logging.getLogger("worker.qubit")
-QNS_URL=os.getenv("QNS_URL", "http://localhost:8003")
+logger = logging.getLogger("worker.qubit")
+QNS_URL = os.getenv("QNS_URL", "http://localhost:8003")
 
-class QubitTask(Task):
-    abstract=True
-    _client=None
-
-    @property
-    def client(self)-> httpx.Client:
-        if self._client is None or self._client.is_closed:
-            self._client=httpx.Client(timeout=10.0)
-        return self._client
-    
 @celery_app.task(
     bind=True,
-    base=QubitTask,
-    name="workers.qubit_tasks.send_qubit_task",
+    name="workers.qubit_tasks.send_batch_task",
     max_retries=2,
-    default_retry_delay=0.5,
+    default_retry_delay=1.0,
     queue="qubit_send",
 )
-def send_qubit_task(self, session_id:str, qubit_id:int, bit:int, basis:str)-> dict:
+def send_batch_task(self, session_id: str, batch_payload: dict) -> dict:
     try:
-        payload=SendQubitReq(session_id=session_id, qubit_id=qubit_id, bit=bit, basis=Basis(basis),).model_dump()
-        payload["basis"]=payload["basis"]
-        resp=self.client.post(f"{QNS_URL}/qubit/send", json=payload,)
-        resp.raise_for_status()
-        data=resp.json()
+        with httpx.Client(timeout=30.0) as client:
+            resp = client.post(
+                f"{QNS_URL}/batch/send",
+                json={"session_id": session_id, "batch": batch_payload},
+            )
+            resp.raise_for_status()
+            data = resp.json()
 
-        logger.debug(f"[qubit {qubit_id}] delivered={data.get('delivered')}")
+        results=data.get("results") or []
 
-        return{
-            "qubit_id":qubit_id,
-            "delivered":data.get("delivered", False),
-            "bit":bit,
-            "basis":basis,
+        delivered = [r["qubit_id"] for r in results if r.get("delivered")]
+        failed    = [r["qubit_id"] for r in results if not r.get("delivered")]
+
+        logger.debug(
+            f"[batch {data['batch_id']}] "
+            f"delivered={len(delivered)} failed={len(failed)}"
+        )
+
+        return {
             "session_id": session_id,
+            "batch_id":   data["batch_id"],
+            "delivered":  delivered,
+            "failed":     failed,
         }
+
     except httpx.HTTPStatusError as e:
         logger.warning(
-            f"[qubit {qubit_id}] HTTP {e.response.status_code}-  "
-            f"retry {self.request.retries}/{self.max_retries}"
+            f"[batch] HTTP {e.response.status_code} "
+            f"session={session_id} — retry {self.request.retries}"
         )
         raise self.retry(exc=e)
-    
+
     except httpx.RequestError as e:
-        logger.warning(f"[qubit {qubit_id}] QNS not available: {exc}")
+        logger.warning(f"[batch] QNS indisponible: {e}")
         raise self.retry(exc=e)
 
-    except Exception as exc:
-
-        logger.error(f"[qubit {qubit_id}] Unexpected error: {exc}")
+    except Exception as e:
+        logger.error(f"[batch] Erreur inattendue: {e}")
+        batch = QubitBatch.model_validate(batch_payload)
         return {
-            "qubit_id":   qubit_id,
-            "delivered":  False,
-            "bit":        bit,
-            "basis":      basis,
             "session_id": session_id,
-            "error":      str(exc),
+            "batch_id":   batch.batch_id,
+            "delivered":  [],
+            "failed":     [q.qubit_id for q in batch.qubits],
         }
-

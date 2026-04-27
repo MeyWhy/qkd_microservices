@@ -11,14 +11,11 @@ import random
 import threading
 import time
 from models import(
-    Basis,
-    NetworkInitReq, NetworkInitResp,
-    SendQubitReq, SendQubitResp,
-    GetMeasurementsReq, GetMeasurementsResp,
-    QubitMeasurement,
-    NetworkStopReq,
-    BB84Error, ErrorCode,
+    Basis,NetworkInitReq, NetworkInitResp,
+    SendBatchReq, SendBatchResp, QubitBatch,
+    QubitMeasurement, NetworkStopReq,
 )
+from redis_store import (get_redis, save_bob_measurements_batch, mark_delivered)
 logging.basicConfig(level=logging.WARNING)
 logger=logging.getLogger("qns")
 
@@ -30,9 +27,7 @@ class NetworkSession:
         self.network= Network.get_instance()
         self.alice_host:Optional[Host] = None
         self.bob_host:Optional[Host] = None
-        self.measurements: list[QubitMeasurement] = []
-        self.lock= threading.Lock()
-        self.bob_ready= threading.Event()
+        self._send_lock= threading.Lock()
         self._active= False
     
     def start(self):
@@ -67,27 +62,64 @@ class NetworkSession:
 _sessions:dict[str, NetworkSession]={}
 _sessions_lock=threading.Lock()
 
-def _encode_and_send(session: NetworkSession, qubit_id: int, bit:int, basis: Basis)-> bool:
-    if random.random() < session.loss_rate:
-        return False
+def _process_batch_sync(
+        session:NetworkSession, 
+        batch: QubitBatch,
+)-> list[dict]:
+    results=[]
+    for qrec in batch.qubits:
+        qid=qrec.qubit_id
+        bit=qrec.bit
+        basis=qrec.basis
+        #simuler perte 
+        if session.loss_rate>0 and random.random() < session.loss_rate:
+            results.append({
+                "qubit_id":qid,
+                "delivered":False,
+                "bob_basis":None,
+                "bob_bit":None,
+            })
+            continue
+        
+        bob_res={}
+        bob_ready=threading.Event()
+        
+        def bob_receive(res=bob_res, ready=bob_ready):
+            q=session.bob_host.get_qubit("Alice", wait=3)
+            if q is None:
+                res['bit']=None
+                res['basis']=None
+            else:
+                bob_basis=random.choice(list(Basis))
+                if bob_basis==Basis.DIAGONAL:
+                    q.H()
+                res["bit"]=q.measure()
+                res['basis']=bob_basis.value
+            ready.set()
 
-    q=Qubit(session.alice_host)
-    if bit==1:
-        q.X()
-    if basis==Basis.DIAGONAL:
-        q.H()
-    session.alice_host.send_qubit('Bob', q, await_ack=False)
-    return True
+        t_bob=threading.Thread(target=bob_receive, daemon=True)    
+        t_bob.start()
+        time.sleep(0.01)
 
-def _bob_receive_and_measure(session:NetworkSession, qubit_id: int, timeout: float=3.0)-> Optional[QubitMeasurement]:
-    q=session.bob_host.get_qubit('Alice', wait=timeout)
-    if q is None:
-        return None
-    bob_basis=random.choice(list(Basis))
-    if bob_basis==Basis.DIAGONAL:
-        q.H()
-    bit_res=q.measure()
-    return QubitMeasurement(qubit_id=qubit_id, basis=bob_basis, bit_res=bit_res)
+        with session._send_lock:
+            q=Qubit(session.alice_host)
+            if bit==1:
+                q.X()
+            if basis==Basis.DIAGONAL:
+                q.H()
+            session.alice_host.send_qubit('Bob', q, await_ack=False)
+        bob_ready.wait(timeout=4.0)
+        t_bob.join(timeout=4.0)
+
+        delivered=bob_res.get('bit') is not None
+        results.append({
+            "qubit_id": qid,
+            "delivered":delivered,
+            "bob_basis": bob_res.get('basis'),
+            "bob_bit":bob_res.get('bit'),
+        })
+
+    return results
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -101,7 +133,7 @@ async def lifespan(app: FastAPI):
 app=FastAPI(
     title="Quantum Network Service",
     description="QuNetSim wrapper for BB84",
-    version="0.3.0",
+    version="0.5.0",
     lifespan=lifespan,
 ) 
 @app.post("/network/init", response_model=NetworkInitResp)
@@ -110,20 +142,17 @@ async def init_network(req: NetworkInitReq):
         dead=[sid for sid, s in _sessions.items() if not s.is_active()]
         for sid in dead:
             del _sessions[sid]
+        
         if req.session_id in _sessions:
             return NetworkInitResp( session_id=req.session_id, statut="ready", message="Already active session")
+        
         if _sessions:
             raise HTTPException(
                 status_code=409,
-                detail=BB84Error(
-                    code=ErrorCode.NETWORK_UNAVAILABLE,
-                    message="a session is already active"
-                            "wait for it to end or call /network/stop",
-                    session_id=req.session_id,
-                ).model_dump(),
-            )
+                detail= "a session is already active")
+        
     loop=asyncio.get_event_loop()
-    session=NetworkSession(req.session_id)
+    session=NetworkSession(req.session_id, loss_rate=req.loss_rate)
 
     try:
         await loop.run_in_executor(None, session.start)
@@ -139,67 +168,45 @@ async def init_network(req: NetworkInitReq):
         message=f"network ready for {req.n_qubits} qubits",
     )
 
-@app.post("/qubit/send", response_model=SendQubitResp)
-async def send_qubit(req: SendQubitReq):
+@app.post("/batch/send", response_model=SendBatchResp)
+async def send_batch(req: SendBatchReq):
     with _sessions_lock:
         session=_sessions.get(req.session_id)
- 
-    if not session:
-        raise HTTPException(
-            status_code=404,
-            detail=BB84Error(
-                code=ErrorCode.SESSION_NOT_FOUND,
-                session_id=req.session_id,
-                message="Session Not found",
-            ).model_dump(),
-        )
- 
-    loop=asyncio.get_event_loop()
-    bob_future=loop.run_in_executor(
-        None, _bob_receive_and_measure, session, req.qubit_id
-    )
-    await asyncio.sleep(0.02)
-
-    delivered=await loop.run_in_executor(None, _encode_and_send, session, req.qubit_id, req.bit, req.basis)
-    if delivered:
-        measurement=await bob_future
-        if measurement:
-            with session.lock:
-                session.measurements.append(measurement)
-    else:
-        bob_future.cancel()
-    return SendQubitResp(
-        qubit_id=req.qubit_id,
-        delivered=delivered,
-    )
-
-@app.get("/measurements/{session_id}", response_model=GetMeasurementsResp)
-async def get_measurements(session_id: str):
-    with _sessions_lock:
-        session=_sessions.get(session_id)
-    if not session:
-        raise HTTPException(
-            status_code=404,
-            detail=BB84Error(
-                code=ErrorCode.SESSION_NOT_FOUND,
-                session_id=session_id,
-                message="Session not found",
-            ).model_dump(),
-        )
-    with session.lock:
-        measurements=list(session.measurements)
     
-    return GetMeasurementsResp(session_id=session_id, measurements=measurements)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    loop=asyncio.get_event_loop()
+    results= await loop.run_in_executor(None, _process_batch_sync,session, req.batch)
+    
+    r=get_redis()
+    measurements=[]
+    delivered_ids=[]
+    
+    for res in results:
+        if res['delivered'] and res['bob_bit'] is not None:
+            measurements.append(QubitMeasurement(
+                qubit_id=res["qubit_id"], 
+                basis=Basis(res["bob_basis"]), 
+                bit_res=res["bob_bit"],
+            ))
+            delivered_ids.append(res["qubit_id"])
+    if measurements:
+        save_bob_measurements_batch(r, req.session_id, measurements)
+        mark_delivered(r, req.session_id, delivered_ids)
+    return SendBatchResp(
+        session_id=req.session_id,
+        batch_id=req.batch.batch_id,
+        results=results,
+    )
 
 @app.post("/network/stop")
 async def stop_network(req: NetworkStopReq):
     with _sessions_lock:
         session=_sessions.pop(req.session_id, None)
-    if not session:
-        return{"statut": "not_found"}
-
-    loop=asyncio.get_event_loop()
-    await loop.run_in_executor(None, session.stop)
+    if session:
+        loop=asyncio.get_event_loop()
+        await loop.run_in_executor(None, session.stop)
     return {"statut": "stopped", "session_id": req.session_id}    
 
  

@@ -14,40 +14,61 @@ def new_session_id() ->str:
 class NetworkInitReq(BaseModel):
     session_id:str
     n_qubits:int= Field(gt=0, le=10000)
+    loss_rate:float=Field(default=0.0, ge=0.0, le=1.0)
 
 class NetworkInitResp(BaseModel):
     session_id: str
     statut:str
     message: str=""
 
-class SendQubitReq(BaseModel):
-    session_id:str
-    qubit_id: int
-    bit: int=Field(ge=0, le=1)
+class QubitRecord(BaseModel):
+    qubit_id:int
+    bit:int
     basis:Basis
 
-class SendQubitResp(BaseModel):
-    qubit_id:int
-    delivered:bool
-
-class GetMeasurementsReq(BaseModel):
+#batch it so we can diminuer overhead de redis
+class QubitBatch(BaseModel):
     session_id:str
+    batch_id:int
+    qubits:list[QubitRecord]
+
+class QubitBatchResult(BaseModel):
+    session_id: str
+    batch_id: int
+    delivered:list[int] #qubit ids qui ont ete livres
+    failed:list[int] #qubit ids failed
+
+class SendBatchReq(BaseModel):
+    session_id: str
+    batch:      QubitBatch
+
+class SendBatchResp(BaseModel):
+    session_id: str
+    batch_id:   int
+    results:    list[dict]   
+
+class SessionMeta(BaseModel):
+    session_id:str
+    n_qubits: int
+    batch_size:int
+    loss_rate:float
+    bits: list[int]
+    bases:list[str]
+    statut: str="init"
+    sample_seed: Optional[int]=None
 
 class QubitMeasurement(BaseModel):
     qubit_id:int
     basis: Basis
     bit_res:int=Field(ge=0, le=1)
 
-class GetMeasurementsResp(BaseModel):
-    session_id:str
-    measurements: list[QubitMeasurement]
-
 class NetworkStopReq(BaseModel):
     session_id:str
 
 class SessionStartReq(BaseModel):
     n_qubits:int=Field(default=200, gt=0, le=5000)
-    loss_rate:float=Field(default=0.0, gt=0.0, le=1.0)
+    loss_rate:float=Field(default=0.0, ge=0.0, le=1.0)
+    batch_size: int=Field(default=10, gt=0, le=100)
 
 class SessionStartResp(BaseModel):
     session_id: str
@@ -62,24 +83,16 @@ class SessionStartResp(BaseModel):
 
 class SiftReq(BaseModel):
     session_id:str
-    alice_bases:list[tuple[int, Basis]]
+    alice_bases:list[tuple[int, str]]
+    sample_seed: int= Field(ge=0)
 
 class SiftResp(BaseModel):
     session_id:str
-    bob_bases: list[tuple[int, Basis]]
+    bob_bases: list[tuple[int, str]]
     n_sifted:int
-
-class BobSessionState(BaseModel):
-    session_id:str
-    measurements: list[QubitMeasurement]= []
-    sifted_bits: list[int]=[]
-    statut: str="measuring" #sifted, or done
-
-
-class BB84Error(BaseModel):
-    code: str
-    message:  str
-    session_id: Optional[str]= None
+    bob_key_len:int
+    matched_ids: list[int]
+    bob_sifted_bits: list[int]
 
 class ErrorCode:
     SESSION_NOT_FOUND="SESSION_NOT_FOUND"

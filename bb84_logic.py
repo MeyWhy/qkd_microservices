@@ -1,5 +1,4 @@
 import random
-import hashlib
 from typing import Optional
 from models import Basis, QubitMeasurement
 
@@ -14,7 +13,11 @@ def compute_qber(
     sample_seed: Optional[int] = None,
 ) -> tuple[float, list[int], list[int]]:
    
+    
     n = min(len(alice_sifted), len(bob_sifted))
+    
+    if len(alice_sifted) != len(bob_sifted):
+        raise ValueError("Alice/Bob sifted mismatch — desync detected")
     if n == 0:
         return 1.0, [], []
 
@@ -34,23 +37,23 @@ def compute_qber(
     return qber, alice_key, bob_key
 
 
-def perform_sifting(
+def perform_sifting_by_id(
     alice_bits: list[int],
-    alice_bases: list[Basis],
-    measurements: list[QubitMeasurement],
-) -> tuple[list[int], list[int]]:
+    alice_bases: list[str],
+    bob_measurements:dict[int, QubitMeasurement],
+) -> tuple[list[int], list[int], list[int]]:
 
     alice_sifted = []
-    bob_sifted   = []
+    bob_sifted = []
+    matched_ids = []
 
-    alice_bases_map = {i: basis for i, basis in enumerate(alice_bases)}
-
-    for m in measurements:
-        qid = m.qubit_id
-        if qid not in alice_bases_map:
+    for qid in sorted(bob_measurements.keys()):
+        if qid >=len(alice_bases):
             continue
-        if alice_bases_map[qid] == m.basis:
+        meas=bob_measurements[qid]
+        if Basis(alice_bases[qid]) == meas.basis:
             alice_sifted.append(alice_bits[qid])
-            bob_sifted.append(m.bit_res)
+            bob_sifted.append(meas.bit_res)
+            matched_ids.append(qid)
 
-    return alice_sifted, bob_sifted
+    return alice_sifted, bob_sifted, matched_ids

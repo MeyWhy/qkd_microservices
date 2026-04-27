@@ -18,15 +18,16 @@ celery_app.conf.update(
         "retry_policy":{"timeout":5.0}
     },
     task_routes={
-        "workers.qubit_tasks.send_qubit_task":  {"queue": "qubit_send"},
-        "workers.sifting_tasks.sifting_task":   {"queue": "sifting"},
+        "workers.qubit_tasks.send_batch_task":  {"queue": "qubit_send"},
+        "workers.sifting_tasks.assemble_and_sift_task":   {"queue": "sifting"},
         "workers.sifting_tasks.qber_key_task":  {"queue": "sifting"},
+        "workers.notify_tasks.notify_orchestrator_task":{"queue": "orchestrator"},
     }, 
     #prefetch=1: chaque worker prend 1 tache à a fois =>evite qu'un worker monopolise toutes les taches qubit pendant qu'un autre est idle
     worker_prefetch_multiplier=1,
     task_acks_late=True, #ack post execution
 
-    result_chord_join_timeout=120,
+    result_chord_join_timeout=180,
 
 )
 

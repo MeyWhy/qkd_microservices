@@ -1,23 +1,17 @@
-import os
 import logging
-import threading
-import httpx
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse 
-from models import (
-    Basis,
-    SiftReq, SiftResp,
-    BobSessionState,
-    QubitMeasurement,
-    BB84Error, ErrorCode,
+from models import ( SiftReq, SiftResp,)
+from redis_store import (
+    get_redis,
+    load_all_bob_measurements,
+    save_session_result,
+    load_session_result,
+    delete_session,
 )
- 
 logger=logging.getLogger("bob")
 logging.basicConfig(level=logging.INFO)
-QNS_URL=os.getenv("QNS_URL", "http://localhost:8003")
-_sessions: dict[str, BobSessionState]={}
-_lock=threading.Lock()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,107 +23,96 @@ async def lifespan(app: FastAPI):
 app=FastAPI(
     title="Bob Service",
     description="Receiver BB84",
-    version="0.3.0",
+    version="0.5.0",
     lifespan=lifespan,
 )
+
 @app.post("/session/register")
 async def register_session(session_id: str):
-    with _lock:
-        if session_id in _sessions:
-            return {"statut": "already_registered", "session_id": session_id}
-        _sessions[session_id]=BobSessionState(session_id=session_id)
- 
     logger.info(f"[Bob] Session {session_id} registered")
     return {"statut": "ready", "session_id": session_id}
 
 @app.post("/sift", response_model=SiftResp)
 async def sift(req: SiftReq):
-    with _lock:
-        session=_sessions.get(req.session_id)
- 
-    if not session:
+    r=get_redis()
+    bob_meas=load_all_bob_measurements(r, req.session_id)
+    if not bob_meas:
         raise HTTPException(
             status_code=404,
-            detail=BB84Error(
-                code=ErrorCode.SESSION_NOT_FOUND,
-                session_id=req.session_id,
-                message="Session non registered",
-            ).model_dump(),
-        )
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.get(
-                f"{QNS_URL}/measurements/{req.session_id}"
-            )
-            resp.raise_for_status()
-    except httpx.HTTPError as e:
-        raise HTTPException(
-            status_code=502,
-            detail=BB84Error(
-                code=ErrorCode.NETWORK_UNAVAILABLE,
-                message=f"Impossible to get the measurements QNS: {e}",
-                session_id=req.session_id,
-            ).model_dump(),
-        )
- 
-    meas_data=resp.json()
-    measurements=[QubitMeasurement(**m) for m in meas_data["measurements"]]
-    alice_bases_map:dict[int, Basis]={qid: basis for qid, basis in req.alice_bases}
-    bob_sifted_bits=[]
-    bob_bases_for_alice: list[tuple[int, Basis]]=[]
- 
-    for m in measurements:
-        bob_bases_for_alice.append((m.qubit_id, m.basis))
-        if m.qubit_id in alice_bases_map and alice_bases_map[m.qubit_id]==m.basis:
-            bob_sifted_bits.append(m.bit_res)
-    with _lock:
-        session.measurements=measurements
-        session.sifted_bits=bob_sifted_bits
-        session.statut="sifted"
+            detail=f"No measurements for session {req.session_id}",)
+    
+    alice_bases_map:dict[int, str]={qid: basis for qid, basis in req.alice_bases}
+    bob_sifted_bits:list[int]=[]
+    bob_bases_for_alice: list[tuple[int, str]]=[]
+    matched_ids:list[int]=[]
+    
+    for qid in sorted(bob_meas.keys()):
+        meas=bob_meas[qid]
+        bob_bases_for_alice.append((qid, meas.basis.value))
+        if qid in alice_bases_map and alice_bases_map[qid]==meas.basis.value:
+            bob_sifted_bits.append(meas.bit_res)
+            matched_ids.append(qid)
+    
+    
+    import random
+    rng=random.Random(req.sample_seed)
+    n=len(bob_sifted_bits)
+    n_sample=max(1, int(n*0.20)) if n>0 else 0
+    sample_idx=set(rng.sample(range(n), n_sample)) if n>=n_sample >0 else set()
+    bob_final_key=[
+        b for i, b in enumerate(bob_sifted_bits)
+        if i not in sample_idx
+    ]
+    save_session_result(r, f"{req.session_id}:bob", {
+        "sifted_bits": bob_sifted_bits,
+        "final_key_len": len(bob_final_key),
+        "n_sifted": n,
+        "matched_ids": matched_ids,
+    })
+
     logger.info(
         f"[Bob] Session {req.session_id} sifted: "
-        f"{len(bob_sifted_bits)} bits retained"
+        f"{len(bob_sifted_bits)} bits retained, {len(bob_final_key)} bits key final"
     )
+
     return SiftResp(
         session_id=req.session_id,
         bob_bases=bob_bases_for_alice,
         n_sifted=len(bob_sifted_bits),
+        bob_key_len=len(bob_final_key),
+        matched_ids=matched_ids,
+        bob_sifted_bits=bob_sifted_bits,
     )
 
 @app.get("/session/{session_id}/sifted-bits")
 async def get_sifted_bits(session_id: str):
-    with _lock:
-        session=_sessions.get(session_id)
- 
-    if not session:
-        raise HTTPException(status_code=404, detail="Session introuvable")
- 
-    if session.statut!="sifted":
-        raise HTTPException(
-            status_code=409,
-            detail="Sifting hasn't been done yet",)
+    r=get_redis()
+    data=load_session_result(r,f"{session_id}:bob")
+    
+    if not data:
+        raise HTTPException(status_code=404, detail="Sifting not done yet")
     return {
         "session_id":session_id,
-        "sifted_bits":session.sifted_bits,
-        "n_sifted":len(session.sifted_bits),}
+        "sifted_bits":data["sifted_bits"],
+        "n_sifted":data["n_sifted"],}
 
 @app.delete("/session/{session_id}")
 async def cleanup_session(session_id: str):
-    with _lock:
-        session=_sessions.pop(session_id, None)
- 
-    if session:
-        logger.info(f"[Bob] Session {session_id} cleaned")
-        return {"statut": "cleaned", "session_id": session_id}
-    return {"statut": "not_found"}
+    r=get_redis()
+    delete_session(r, session_id)
+    r.delete(f"session:{session_id}:bob:result")
+    return {"statut": "cleaned", "session_id": session_id}
 
  
 @app.get("/health")
 async def health():
-    with _lock:
-        active=list(_sessions.keys())
-    return {"statut": "ok", "active_sessions": active}
- 
+    try:
+        r = get_redis()
+        r.ping()
+        redis_ok = True
+    except Exception:
+        redis_ok = False
+    return {"statut": "ok", "redis": redis_ok}
  
 if __name__=="__main__":
     import uvicorn
