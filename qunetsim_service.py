@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from qunetsim.components import Host, Network
 from qunetsim.backends import EQSNBackend
 from qunetsim.objects import Qubit
@@ -18,7 +19,23 @@ from models import(
 from redis_store import (get_redis, save_bob_measurements_batch, mark_delivered)
 logging.basicConfig(level=logging.WARNING)
 logger=logging.getLogger("qns")
+_classical_inbox: dict[str, list[str]] = {}   # session_id → [hex, ...]
+_classical_lock = threading.Lock()
 
+class ClassicalSendReq(BaseModel):
+    session_id: str
+    payload_hex: str          #ciphertext as hex string
+    mode: str = "direct"      #direct or broadcast
+
+class ClassicalSendResp(BaseModel):
+    session_id: str
+    delivered: bool
+    mode: str
+
+class ClassicalRecvResp(BaseModel):
+    session_id: str
+    payload_hex: str          # "" if nothing wait
+    available: bool
 class NetworkSession:
     def __init__(self, session_id: str, loss_rate:float=0.0):
         self.session_id= session_id
@@ -200,10 +217,92 @@ async def send_batch(req: SendBatchReq):
         results=results,
     )
 
+@app.post("/classical/send", response_model=ClassicalSendResp)
+async def send_classical(req: ClassicalSendReq):
+    """
+    Sends ciphertext from Alice to Bob over the already-running
+    QuNetSim network for this session.
+
+    Uses the live alice_host/bob_host that were created during
+    /network/init — no new network is spun up.
+
+    Bob's receive runs in a thread (QuNetSim is blocking),
+    and the result is stored in _classical_inbox for the
+    /classical/recv poll.
+    """
+    with _sessions_lock:
+        session = _sessions.get(req.session_id)
+
+    if not session or not session.is_active():
+        raise HTTPException(status_code=404, detail="Session not found or inactive")
+
+    loop = asyncio.get_event_loop()
+
+    def _do_send():
+        # Bob listens first
+        received = {}
+        ready    = threading.Event()
+
+        def _bob_listen():
+            msgs = session.bob_host.get_classical("Alice", wait=10)
+            if msgs:
+                m       = msgs[-1] if isinstance(msgs, list) else msgs
+                content = getattr(m, "content", m)
+                received["hex"] = content if isinstance(content, str) else content.hex()
+            ready.set()
+
+        threading.Thread(target=_bob_listen, daemon=True).start()
+        time.sleep(0.05)
+
+        # Alice sends
+        if req.mode == "broadcast":
+            session.alice_host.send_broadcast(req.payload_hex, ["Bob"])
+        else:
+            session.alice_host.send_classical("Bob", req.payload_hex)
+
+        ready.wait(timeout=10.0)
+
+        if "hex" in received:
+            with _classical_lock:
+                _classical_inbox.setdefault(req.session_id, []).append(received["hex"])
+            return True
+        return False
+
+    delivered = await loop.run_in_executor(None, _do_send)
+
+    return ClassicalSendResp(
+        session_id=req.session_id,
+        delivered=delivered,
+        mode=req.mode,
+    )
+
+
+@app.get("/classical/recv/{session_id}", response_model=ClassicalRecvResp)
+async def recv_classical(session_id: str):
+    """
+    Retrieves the next classical message from Bob's inbox.
+    Returns available=False if nothing is waiting.
+    """
+    with _classical_lock:
+        inbox = _classical_inbox.get(session_id, [])
+        if inbox:
+            return ClassicalRecvResp(
+                session_id=session_id,
+                payload_hex=inbox.pop(0),
+                available=True,
+            )
+    return ClassicalRecvResp(
+        session_id=session_id,
+        payload_hex="",
+        available=False,
+    )
+
 @app.post("/network/stop")
 async def stop_network(req: NetworkStopReq):
     with _sessions_lock:
         session=_sessions.pop(req.session_id, None)
+    with _classical_lock:
+        _classical_inbox.pop(req.session_id, None)
     if session:
         loop=asyncio.get_event_loop()
         await loop.run_in_executor(None, session.stop)

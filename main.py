@@ -6,10 +6,9 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from state_machine import(
-    OrchestratorSession, SessionStatus,
-    SessionStartRequest, SessionStatusResponse,
+    OrchestratorSession, SessionStatus,SessionStatusResponse,
     session_to_response, new_session_id, TransitionError,)
-from models import NetworkInitReq
+from models import NetworkInitReq, SessionStartReq
 from orch_store import (get_redis, save_orch_session, load_orch_session,
     update_orch_session, list_active_sessions, list_all_sessions,)
 
@@ -106,7 +105,7 @@ async def _run_session(session_id: str)-> None:
         
 
 @app.post("/session/start", response_model=SessionStatusResponse)
-async def start_session(req: SessionStartRequest, background_tasks:BackgroundTasks):
+async def start_session(req: SessionStartReq, background_tasks:BackgroundTasks):
     session_id=new_session_id()
     r = get_redis()
     session=OrchestratorSession(

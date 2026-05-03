@@ -6,25 +6,25 @@ import uuid
 import time
 
 class SessionStatus(str, Enum):
-    CREATED      = "created"       # Session créée, pas encore démarrée
-    INITIALIZING = "initializing"  # QNS + Bob en cours d'init
-    SENDING      = "sending"       # Qubits en transit (workers Celery)
-    SIFTING      = "sifting"       # Chord terminé, sifting en cours
-    DONE         = "done"          # Clé générée avec succès
-    ABORTED      = "aborted"       # Erreur non récupérable
+    CREATED      = "created"       #Session créee, pas encore demarré
+    INITIALIZING = "initializing"  #QNS + Bob en cours d'init
+    SENDING      = "sending"       #Qubits en transit (workers Celery)
+    SIFTING      = "sifting"       #Chord done, sifting en cours
+    DONE         = "done"          #Cle gen avec succes
+    ABORTED      = "aborted"       #Erreur non recup
 
 
-# Transitions valides : état_courant → {états_suivants autorisés}
+#Transitions valides: etat_courant->>> {etats_suivants autorises}
 VALID_TRANSITIONS: dict[SessionStatus, set[SessionStatus]] = {
     SessionStatus.CREATED:      {SessionStatus.INITIALIZING, SessionStatus.ABORTED},
     SessionStatus.INITIALIZING: {SessionStatus.SENDING,      SessionStatus.ABORTED},
     SessionStatus.SENDING:      {SessionStatus.SIFTING,      SessionStatus.ABORTED},
     SessionStatus.SIFTING:      {SessionStatus.DONE,         SessionStatus.ABORTED},
-    SessionStatus.DONE:         set(),   # état terminal
-    SessionStatus.ABORTED:      set(),   # état terminal
+    SessionStatus.DONE:         set(),
+    SessionStatus.ABORTED:      set(),
 }
 
-# États terminaux — aucune transition possible
+#etats terminaux => aucune transition possible
 TERMINAL_STATES = {SessionStatus.DONE, SessionStatus.ABORTED}
 
 
@@ -33,12 +33,12 @@ class TransitionError(Exception):
 
 
 def validate_transition(current: SessionStatus, target: SessionStatus) -> None:
-
     if target not in VALID_TRANSITIONS.get(current, set()):
         raise TransitionError(
-            f"Transition interdite : {current.value} → {target.value}. "
+            f"Transition interdite : {current.value} -> {target.value}. "
             f"Transitions valides : {[s.value for s in VALID_TRANSITIONS[current]]}"
         )
+
 
 class OrchestratorSession(BaseModel):
 
@@ -48,15 +48,15 @@ class OrchestratorSession(BaseModel):
     batch_size:   int
     loss_rate:    float
 
-    # Timestamps pour métriques de latence
+    #timestamps pour metrics de latence
     created_at:      float = Field(default_factory=time.time)
     started_at:      Optional[float] = None
     sending_at:      Optional[float] = None
     sifting_at:      Optional[float] = None
     completed_at:    Optional[float] = None
 
-    # Résultats intermédiaires
-    celery_task_id:  Optional[str] = None   # ID du chord Celery
+    #res intermediaire
+    celery_task_id:  Optional[str] = None   #id du chord celery
     n_delivered:     int   = 0
     n_sifted:        int   = 0
     qber:            float = 0.0
@@ -64,10 +64,6 @@ class OrchestratorSession(BaseModel):
     error_message:   str   = ""
 
     def transition(self, target: SessionStatus) -> "OrchestratorSession":
-        """
-        Applique une transition et horodate.
-        Retourne self pour le chaînage.
-        """
         validate_transition(self.status, target)
         self.status = target
 
@@ -93,12 +89,6 @@ class OrchestratorSession(BaseModel):
     def is_terminal(self) -> bool:
         return self.status in TERMINAL_STATES
 
-class SessionStartRequest(BaseModel):
-    n_qubits:   int   = Field(default=200, gt=0, le=5_000)
-    loss_rate:  float = Field(default=0.0,  ge=0.0, le=1.0)
-    batch_size: int   = Field(default=10,   gt=0,   le=100)
-
-
 class SessionStatusResponse(BaseModel):
     session_id:    str
     status:        SessionStatus
@@ -110,8 +100,8 @@ class SessionStatusResponse(BaseModel):
     key_final:      str   = ""
     error_message: str   = ""
 
-    # Champs de progression pour le client
-    progress_pct:  float = 0.0   # 0–100
+    #champs de progression pour le client not necessary
+    progress_pct:  float = 0.0   # 0-100
     phase_label:   str   = ""
 
 
@@ -127,11 +117,11 @@ def session_to_response(s: OrchestratorSession) -> SessionStatusResponse:
     }
     labels = {
         SessionStatus.CREATED:      "En attente",
-        SessionStatus.INITIALIZING: "Initialisation réseau quantique",
+        SessionStatus.INITIALIZING: "Initialisation reseau quantique",
         SessionStatus.SENDING:      "Transmission des qubits",
         SessionStatus.SIFTING:      "Sifting & calcul QBER",
-        SessionStatus.DONE:         "Clé générée",
-        SessionStatus.ABORTED:      "Session abandonnée",
+        SessionStatus.DONE:         "Cle generee",
+        SessionStatus.ABORTED:      "Session abandonnee",
     }
 
     return SessionStatusResponse(
