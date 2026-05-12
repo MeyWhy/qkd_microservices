@@ -1,14 +1,3 @@
-"""
-kme/node_registry.py
-=====================
-Registers nodes and delivers webhook notifications.
-
-Redis schema:
-  kme:node:{node_id}  → NodeInfo JSON
-  kme:nodes:all       → set of node_ids
-  kme:nodes:{role}    → set of node_ids with that role
-"""
-
 import json
 import logging
 import os
@@ -18,11 +7,11 @@ from typing import Optional
 import httpx
 import redis
 
-from shared.models import NodeInfo, NodeRole, NodeRegistration, WebhookEvent
+from models import NodeInfo, NodeRole, NodeRegistration, WebhookEvent
 
 logger = logging.getLogger("kme.registry")
 REDIS_URL   = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-NODE_TTL    = 86400   # 24h — nodes re-register on startup
+NODE_TTL    = 86400   # 24h nodes re-register on startup
 
 
 def get_redis() -> redis.Redis:
@@ -32,7 +21,6 @@ def get_redis() -> redis.Redis:
 def _kn(node_id: str) -> str: return f"kme:node:{node_id}"
 
 
-# ── Registration ──────────────────────────────────────────────
 
 def register_node(r: redis.Redis, reg: NodeRegistration) -> NodeInfo:
     import uuid
@@ -80,19 +68,9 @@ def list_nodes(r: redis.Redis,
     return nodes
 
 
-# ── Webhook delivery ──────────────────────────────────────────
+#webhook delivery: utilise pour echange of notifs entre nodes instead of pooling pour eviter http connect a chaque fois
 
 async def notify_node(node: NodeInfo, event: WebhookEvent) -> bool:
-    """
-    Sends a webhook POST to the node's callback_url.
-    Fire-and-forget: logs on failure but does not raise.
-
-    Why webhooks and not polling?
-    Polling works but wastes HTTP connections.
-    Webhooks let nodes react immediately without a polling loop.
-    Nodes that don't implement a callback_url will miss events
-    and fall back to polling GET /sessions/{id}.
-    """
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             resp = await client.post(

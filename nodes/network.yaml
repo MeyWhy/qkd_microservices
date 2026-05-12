@@ -1,7 +1,6 @@
-# network.yaml
-# ==============
+
 # Defines the QKD network topology.
-# Add a new node here → it starts, registers, and participates automatically.
+# Add a new node here -> it starts, registers, and participates automatically.
 # No code changes required for new Alice/Bob instances.
 
 kme:

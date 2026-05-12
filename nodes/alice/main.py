@@ -1,27 +1,4 @@
 """
-nodes/alice/main.py  — SAE-A (Alice)
-======================================
-Port 8001.
-
-Alice is now an active agent. She:
-  1. Registers with KME on startup
-  2. On demand: creates a session (POST /sessions)
-  3. On webhook receiver_joined: starts transmitting qubits
-  4. On webhook measurements_ready: runs sifting + QBER locally
-  5. Posts final key result to KME (POST /sessions/{id}/key)
-
-BB84 logic is unchanged — same bb84_logic.py functions.
-What changed: Alice drives the flow instead of being driven.
-
-Compared to v6 alice.py:
-  - Removed: /emit endpoint (orchestrator no longer calls Alice)
-  - Removed: Celery chord/group for qubit sending (now async HTTP batches)
-  - Added:   POST /start  (client calls Alice directly to start a session)
-  - Added:   webhook handlers (on_receiver_joined, on_measurements_ready)
-  - Added:   BaseNode inheritance
-  - Kept:    _make_batches, BB84 logic (compute_qber, derive_final_key)
-  - Kept:    qubit_id explicit in all batches
-
 Why remove Celery here?
   Celery's chord was needed when the orchestrator was driving parallel
   qubit dispatch. Now Alice drives her own async loop — asyncio tasks
@@ -43,12 +20,12 @@ from fastapi import FastAPI
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from node.base_node import BaseNode
-from shared.models import (
+from models import (
     NodeRole, SessionCreateReq,
     QubitRecord, QubitBatch, QubitUpload,
     SiftUpload, KeyUpload, Basis,
 )
-from shared.bb84_logic import compute_qber, QBER_THRESHOLD
+from bb84_logic import compute_qber, QBER_THRESHOLD
 
 logger = logging.getLogger("alice")
 logging.basicConfig(level=logging.INFO)
@@ -60,11 +37,7 @@ BATCH_SIZE = int(os.getenv("BATCH_SIZE", "10"))
 
 
 class AliceNode(BaseNode):
-    """
-    Alice: the sender node in BB84.
-    Inherits registration, webhook handling, and polling from BaseNode.
-    """
-
+ 
     def __init__(self):
         super().__init__(
             role=NodeRole.SENDER,
@@ -74,10 +47,7 @@ class AliceNode(BaseNode):
         # session_id → {bits, bases, n_qubits, ...}
         self._alice_state: dict[str, dict] = {}
 
-    # ─────────────────────────────────────────
-    # Client-facing: start a new session
-    # ─────────────────────────────────────────
-
+    #client 
     async def start_bb84_session(
         self,
         receiver_label: str,
@@ -86,10 +56,7 @@ class AliceNode(BaseNode):
         loss_rate:      float = 0.0,
         retry_enabled:  bool  = False,
     ) -> str:
-        """
-        Alice initiates a BB84 session with a named receiver.
-        Returns session_id immediately (KME returns 202).
-        """
+
         resp = await self._client.post(
             f"{KME_URL}/sessions",
             json=SessionCreateReq(
@@ -105,7 +72,7 @@ class AliceNode(BaseNode):
         data       = resp.json()
         session_id = data["session_id"]
 
-        # Generate bits and bases locally right away
+        #gnerate bits and bases locally right away
         bits  = [random.randint(0, 1)       for _ in range(n_qubits)]
         bases = [random.choice(list(Basis)) for _ in range(n_qubits)]
 
@@ -123,30 +90,18 @@ class AliceNode(BaseNode):
         )
         return session_id
 
-    # ─────────────────────────────────────────
-    # Webhook handlers
-    # ─────────────────────────────────────────
-
+    
     async def on_receiver_joined(self, session_id: str, payload: dict) -> None:
-        """
-        Bob has joined → Alice starts sending qubits.
-        Runs as an asyncio task (non-blocking).
-        """
+  
         logger.info(f"[Alice] Receiver joined session {session_id[:8]} — sending qubits")
         asyncio.create_task(self._send_qubits(session_id))
 
     async def on_measurements_ready(self, session_id: str, payload: dict) -> None:
-        """
-        Bob's measurements are in the KME bus.
-        Alice fetches them, runs sifting + QBER, posts key.
-        """
+  
         logger.info(f"[Alice] Measurements ready session {session_id[:8]}")
         asyncio.create_task(self._run_sifting_and_key(session_id))
 
-    # ─────────────────────────────────────────
-    # BB84 logic — Alice-side
-    # ─────────────────────────────────────────
-
+  
     async def _send_qubits(self, session_id: str) -> None:
         """
         Batch-uploads qubit data to the KME bus.
@@ -176,15 +131,15 @@ class AliceNode(BaseNode):
                 qubits=qubits,
             )
             await self._client.post(
-                f"{KME_URL}/sessions/{session_id}/qubits",
-                json=QubitUpload(
-                    session_id=session_id,
-                    batch=batch,
-                ).model_dump(),
+                f"{QKDL_URL}/batch/send",
+                json={
+                    "session_id": session_id,
+                    "batch": batch.model_dump(),
+                },
             )
             batch_id += 1
 
-            # Small yield to keep event loop responsive
+            #small yield to keep event loop responsive
             await asyncio.sleep(0.01)
 
         logger.info(
@@ -200,14 +155,20 @@ class AliceNode(BaseNode):
         if not state:
             return
 
-        # ── Fetch measurements ────────────────────────────
+        if state.get("sifting_running"):
+            return
+
+        state["sifting_running"] = True
+
+
+        #Fetch measurements
         resp = await self._client.get(
             f"{KME_URL}/sessions/{session_id}/measurements"
         )
         resp.raise_for_status()
         raw_meas = resp.json().get("measurements", [])
 
-        # ── Sifting by qubit_id ───────────────────────────
+        #Sifting by qubit_id 
         alice_bits  = state["bits"]
         alice_bases = [b.value for b in state["bases"]]
         sample_seed = random.randint(0, 2**31)
@@ -236,17 +197,17 @@ class AliceNode(BaseNode):
             f"n_sifted={n_sifted}/{state['n_qubits']}"
         )
 
-        # Post Alice's bases to KME so Bob can do his local sift
+        #Post Alice's bases to KME so Bob can do his local sift
         await self._client.post(
             f"{KME_URL}/sessions/{session_id}/sift",
             json=SiftUpload(
                 session_id=session_id,
-                alice_bases=list(bob_bases_map.items()),
+                alice_bases=list(enumerate(alice_bases)),
                 sample_seed=sample_seed,
             ).model_dump(),
         )
 
-        # ── QBER + key ────────────────────────────────────
+        #QBER + key
         if n_sifted < 10:
             await self._post_key(session_id, status="aborted",
                                  error="INSUFFICIENT_BITS",
@@ -296,15 +257,9 @@ class AliceNode(BaseNode):
             ).model_dump(),
         )
 
-    # ─────────────────────────────────────────
-    # Polling fallback (override base)
-    # ─────────────────────────────────────────
 
-    async def _poll_tick(self) -> None:
-        """
-        For each active session, check if measurements are ready
-        in case the webhook was missed.
-        """
+    """async def _poll_tick(self) -> None:
+  
         for sid, state in list(self._alice_state.items()):
             if state.get("sifting_done"):
                 continue
@@ -317,11 +272,7 @@ class AliceNode(BaseNode):
             except Exception:
                 pass
 
-
-# ─────────────────────────────────────────────
-# FastAPI app
-# ─────────────────────────────────────────────
-
+"""
 alice = AliceNode()
 app   = alice.build_app(title="SAE-A — Alice (Sender)", port=8001)
 
@@ -334,10 +285,7 @@ async def start_session(
     loss_rate:      float = 0.0,
     retry_enabled:  bool  = False,
 ):
-    """
-    Client calls this to start a BB84 session.
-    Alice creates it with the KME and returns session_id.
-    """
+   
     if not alice.node_id:
         return {"error": "Not registered yet"}, 503
 

@@ -1,18 +1,3 @@
-"""
-kme/session_store.py
-=====================
-Redis state for KME sessions.
-
-Key schema:
-  kme:session:{id}          → full session JSON
-  kme:session:{id}:qubits   → list of QubitBatch JSON (LPUSH)
-  kme:session:{id}:meas     → hash {qubit_id → MeasurementRecord JSON}
-  kme:session:{id}:sift     → SiftUpload JSON (Alice's bases)
-  kme:session:{id}:key      → KeyUpload JSON (final result)
-  kme:sessions:open         → set of session_ids awaiting a receiver
-  kme:sessions:active       → set of active session_ids
-"""
-
 import json
 import os
 import time
@@ -20,7 +5,7 @@ from typing import Optional
 
 import redis
 
-from shared.models import (
+from models import (
     KeyStatus, SessionStatusResponse,
     QubitBatch, MeasurementUpload, SiftUpload, KeyUpload,
 )
@@ -33,7 +18,6 @@ def get_redis() -> redis.Redis:
     return redis.from_url(REDIS_URL, decode_responses=True)
 
 
-# ── Key helpers ───────────────────────────────────────────────
 
 def _ks(sid: str)       -> str: return f"kme:session:{sid}"
 def _kq(sid: str)       -> str: return f"kme:session:{sid}:qubits"
@@ -42,7 +26,6 @@ def _ksift(sid: str)    -> str: return f"kme:session:{sid}:sift"
 def _kkey(sid: str)     -> str: return f"kme:session:{sid}:key"
 
 
-# ── Session CRUD ──────────────────────────────────────────────
 
 def save_session(r: redis.Redis, session: dict) -> None:
     sid = session["session_id"]
@@ -62,7 +45,6 @@ def load_session(r: redis.Redis, session_id: str) -> Optional[dict]:
 
 
 def update_session(r: redis.Redis, session_id: str, **fields) -> None:
-    """Patch specific fields without reloading the whole session."""
     session = load_session(r, session_id)
     if session:
         session.update(fields)
@@ -77,16 +59,13 @@ def list_active_sessions(r: redis.Redis) -> list[str]:
     return list(r.smembers("kme:sessions:active"))
 
 
-# ── Qubit bus ─────────────────────────────────────────────────
-
+#Qubit bus 
 def push_qubit_batch(r: redis.Redis, session_id: str, batch: dict) -> None:
-    """Alice pushes a qubit batch onto the bus."""
     r.rpush(_kq(session_id), json.dumps(batch))
     r.expire(_kq(session_id), SESSION_TTL)
 
 
 def pop_qubit_batch(r: redis.Redis, session_id: str) -> Optional[dict]:
-    """QKDL pops the next batch to transmit."""
     raw = r.lpop(_kq(session_id))
     return json.loads(raw) if raw else None
 
@@ -95,11 +74,9 @@ def qubit_batch_count(r: redis.Redis, session_id: str) -> int:
     return r.llen(_kq(session_id))
 
 
-# ── Measurement bus ───────────────────────────────────────────
-
+#measurement bus
 def save_measurements(r: redis.Redis, session_id: str,
                        upload: dict) -> None:
-    """Bob pushes measurements. Stored as hash qubit_id → JSON."""
     meas_list = upload.get("measurements", [])
     if not meas_list:
         return
@@ -116,10 +93,8 @@ def load_measurements(r: redis.Redis, session_id: str) -> dict[int, dict]:
     return {int(k): json.loads(v) for k, v in raw.items()}
 
 
-# ── Sift bus ──────────────────────────────────────────────────
-
+#sifting bus
 def save_sift_upload(r: redis.Redis, session_id: str, upload: dict) -> None:
-    """Alice posts her bases for Bob to retrieve."""
     r.set(_ksift(session_id), json.dumps(upload), ex=SESSION_TTL)
 
 
@@ -128,8 +103,7 @@ def load_sift_upload(r: redis.Redis, session_id: str) -> Optional[dict]:
     return json.loads(raw) if raw else None
 
 
-# ── Key store ─────────────────────────────────────────────────
-
+#key save
 def save_key_upload(r: redis.Redis, session_id: str, upload: dict) -> None:
     r.set(_kkey(session_id), json.dumps(upload), ex=SESSION_TTL)
 
@@ -139,8 +113,7 @@ def load_key_upload(r: redis.Redis, session_id: str) -> Optional[dict]:
     return json.loads(raw) if raw else None
 
 
-# ── Key lifecycle ─────────────────────────────────────────────
-
+#key lifecycle management
 KEY_TTL = int(os.getenv("BB84_KEY_TTL", "300"))
 
 
@@ -153,10 +126,7 @@ def activate_key(r: redis.Redis, session_id: str) -> float:
 
 
 def consume_key(r: redis.Redis, session_id: str) -> tuple[bool, Optional[str]]:
-    """
-    Atomically consume the key (one-time use).
-    Returns (success, key_final).
-    """
+
     session = load_session(r, session_id)
     if not session:
         return False, None
@@ -174,7 +144,6 @@ def consume_key(r: redis.Redis, session_id: str) -> tuple[bool, Optional[str]]:
     return True, session.get("key_final", "")
 
 
-# ── Cleanup ───────────────────────────────────────────────────
 
 def delete_session(r: redis.Redis, session_id: str) -> None:
     r.delete(

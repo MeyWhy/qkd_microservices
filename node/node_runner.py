@@ -1,7 +1,4 @@
 """
-node/node_runner.py
-====================
-Reads network.yaml and starts all configured nodes as subprocesses.
 Adding a new node to network.yaml is the only step required.
 
 Usage:
@@ -30,10 +27,7 @@ def load_config() -> dict:
 
 
 def start_node(node_cfg: dict) -> subprocess.Popen:
-    """
-    Starts a single node as a subprocess.
-    Sets environment variables from config before launch.
-    """
+
     env = {**os.environ}
     env.update(node_cfg.get("env", {}))
 
@@ -108,7 +102,7 @@ def main():
 
     print(f"\nAll nodes started. Ctrl+C to stop.\n")
 
-    # Wait for any node to exit unexpectedly
+    #wait for any node to exit unexpectedly
     while True:
         for i, proc in enumerate(procs):
             ret = proc.poll()

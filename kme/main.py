@@ -1,46 +1,15 @@
-"""
-kme/main.py  — KME (Key Management Entity)
-============================================
-Port 8000.
-
-The KME is now a registry + message bus, not a controller.
-Nodes call the KME. The KME stores state and notifies peers.
-
-ETSI GS QKD 014 endpoint aliases:
-  POST /keys          = POST /sessions          (create session)
-  GET  /keys/{key_ID} = GET  /sessions/{id}     (get session status)
-  POST /keys/{key_ID}/consume = consume key (one-time)
-
-What changed from v6 main.py:
-  - Removed: _run_session background task (KME no longer calls nodes)
-  - Removed: direct calls to Alice /emit
-  - Removed: direct calls to Bob /session/register
-  - Added:   POST /sessions        (Alice calls this to create)
-  - Added:   POST /sessions/{id}/join (Bob calls this to join)
-  - Added:   POST /sessions/{id}/qubits (Alice posts qubit batches)
-  - Added:   GET  /sessions/{id}/qubits (QKDL polls next batch)
-  - Added:   POST /sessions/{id}/measurements (Bob posts results)
-  - Added:   GET  /sessions/{id}/measurements (Alice retrieves)
-  - Added:   POST /sessions/{id}/sift   (Alice posts bases)
-  - Added:   GET  /sessions/{id}/sift   (Bob retrieves Alice's bases)
-  - Added:   POST /sessions/{id}/key    (Alice posts final key)
-  - Added:   POST /nodes/register       (any node registers)
-  - Added:   GET  /nodes               (list nodes)
-  - Kept:    GET  /sessions/{id}       (polling, unchanged)
-  - Kept:    DELETE /sessions/{id}     (cancel)
-  - Kept:    GET  /health
-"""
-
 import asyncio
 import logging
 import os
+import sys
 import time
 from contextlib import asynccontextmanager
 
 import httpx
 from fastapi import FastAPI, HTTPException, BackgroundTasks
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from shared.models import (
+from models import (
     NodeRegistration, NodeInfo, NodeRole,
     SessionCreateReq, SessionJoinReq, SessionJoinResp,
     QubitUpload, MeasurementUpload,
@@ -63,26 +32,21 @@ from kme.node_registry import (
     list_nodes, notify_node,
 )
 
-logger    = logging.getLogger("kme")
+logger=logging.getLogger("kme")
 logging.basicConfig(level=logging.INFO)
 
 QKDL_URL = os.getenv("QKDL_URL",  "http://localhost:8003")
 HTTP_TO  = 30.0
 
-
-# ─────────────────────────────────────────────
-# App
-# ─────────────────────────────────────────────
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("[KME] Started — ETSI GS QKD 014 compliant")
+    logger.info("[KME] Started - ETSI GS QKD 014 compliant")
     yield
     logger.info("[KME] Stopped")
 
 
 app = FastAPI(
-    title="KME — Key Management Entity",
+    title="KME - Key Management Entity",
     description=(
         "ETSI GS QKD 014 compliant Key Management Entity. "
         "Agent-driven BB84 QKD over distributed microservices."
@@ -92,10 +56,6 @@ app = FastAPI(
 )
 
 
-# ─────────────────────────────────────────────
-# Helpers
-# ─────────────────────────────────────────────
-
 def _get_session_or_404(r, session_id: str) -> dict:
     session = load_session(r, session_id)
     if not session:
@@ -104,71 +64,50 @@ def _get_session_or_404(r, session_id: str) -> dict:
 
 
 async def _notify(node_id: str, event: WebhookEvent) -> None:
-    """Best-effort webhook — never raises."""
     r    = get_redis()
     node = load_node(r, node_id)
     if node:
         await notify_node(node, event)
 
 
-# ─────────────────────────────────────────────
-# Node registry endpoints
-# ─────────────────────────────────────────────
-
+#node registry endpoints
 @app.post("/nodes/register", response_model=NodeInfo)
 async def register(reg: NodeRegistration):
-    """
-    Any node registers here on startup.
-    Returns a node_id the node must keep for all subsequent calls.
-    """
-    r    = get_redis()
+    #any node registers here on startup
+    r =get_redis()
     info = register_node(r, reg)
     return info
 
 
 @app.get("/nodes", response_model=list[NodeInfo])
 async def get_nodes(role: str = None):
-    r    = get_redis()
+    r =get_redis()
     role_enum = NodeRole(role) if role else None
     return list_nodes(r, role=role_enum)
 
 
 @app.get("/nodes/{node_id}", response_model=NodeInfo)
 async def get_node(node_id: str):
-    r    = get_redis()
+    r =get_redis()
     node = load_node(r, node_id)
     if not node:
         raise HTTPException(status_code=404, detail="Node not found")
     return node
 
-
-# ─────────────────────────────────────────────
-# Session lifecycle — nodes drive it
-# ─────────────────────────────────────────────
-
+#session lifecycle =>> nodes drive it
 @app.post("/sessions", status_code=202)
 @app.post("/keys",     status_code=202)    # ETSI alias
 async def create_session(
     req: SessionCreateReq,
     background_tasks: BackgroundTasks,
 ):
-    """
-    Alice calls this to start a new QKD session.
 
-    KME:
-      1. Creates session record (status=open)
-      2. Looks up the target Bob by label
-      3. Notifies Bob via webhook {event: session_open}
-      4. Returns session_id immediately (202 Accepted)
+    #alice calls this to start a new QKD session.
 
-    Alice then:
-      - Initialises the QKDL network herself (or KME can do it)
-      - Starts posting qubit batches to POST /sessions/{id}/qubits
-    """
-    r          = get_redis()
+    r = get_redis()
     session_id = new_session_id()
 
-    # Find target receiver
+    #find target receiver aka bob for now
     bob_node = find_node_by_label(r, req.receiver_label)
     if not bob_node:
         raise HTTPException(
@@ -176,7 +115,7 @@ async def create_session(
             detail=f"Receiver node '{req.receiver_label}' not registered"
         )
 
-    # Create session record
+    #create session record
     session = {
         "session_id":      session_id,
         "status":          "open",
@@ -197,12 +136,12 @@ async def create_session(
     }
     save_session(r, session)
 
-    # Init QKDL network in background
+    #init QKDL network in background (qunestim service)
     background_tasks.add_task(
         _init_qkdl, session_id, req.n_qubits, req.loss_rate
     )
 
-    # Notify Bob via webhook
+    #notify Bob via webhook
     background_tasks.add_task(
         _notify, bob_node.node_id,
         WebhookEvent(
@@ -225,11 +164,7 @@ async def create_session(
 
 @app.post("/sessions/{session_id}/join", response_model=SessionJoinResp)
 async def join_session(session_id: str, req: SessionJoinReq):
-    """
-    Bob calls this after receiving the session_open webhook.
-    KME marks session as 'joined' and notifies Alice.
-    """
-    r       = get_redis()
+    r = get_redis()
     session = _get_session_or_404(r, session_id)
 
     if session["status"] != "open":
@@ -240,7 +175,7 @@ async def join_session(session_id: str, req: SessionJoinReq):
 
     update_session(r, session_id, status="joined")
 
-    # Notify Alice that Bob is ready
+    #notify Alice that Bob is ready
     asyncio.create_task(_notify(
         session["sender_node_id"],
         WebhookEvent(
@@ -261,16 +196,9 @@ async def join_session(session_id: str, req: SessionJoinReq):
     )
 
 
-# ─────────────────────────────────────────────
-# Qubit bus
-# ─────────────────────────────────────────────
-
+# Alice posts qubit batches here in form of bus
 @app.post("/sessions/{session_id}/qubits", status_code=202)
 async def upload_qubits(session_id: str, req: QubitUpload):
-    """
-    Alice posts qubit batches here.
-    KME stores them; QKDL polls and transmits to Bob.
-    """
     r = get_redis()
     _get_session_or_404(r, session_id)
     push_qubit_batch(r, session_id, req.batch.model_dump())
@@ -280,30 +208,19 @@ async def upload_qubits(session_id: str, req: QubitUpload):
 
 @app.get("/sessions/{session_id}/qubits/next")
 async def next_qubit_batch(session_id: str):
-    """
-    QKDL polls this to get the next batch to transmit.
-    Returns null if queue is empty.
-    """
-    r     = get_redis()
+    r = get_redis()
     batch = pop_qubit_batch(r, session_id)
     return {"session_id": session_id, "batch": batch,
             "remaining": qubit_batch_count(r, session_id)}
 
 
-# ─────────────────────────────────────────────
-# Measurement bus
-# ─────────────────────────────────────────────
-
+#here bob measures
 @app.post("/sessions/{session_id}/measurements", status_code=202)
 async def upload_measurements(
     session_id: str,
     upload: MeasurementUpload,
     background_tasks: BackgroundTasks,
 ):
-    """
-    Bob posts his measurements after receiving qubits from QKDL.
-    KME stores them and notifies Alice they are ready.
-    """
     r = get_redis()
     _get_session_or_404(r, session_id)
     save_measurements(r, session_id, upload.model_dump())
@@ -326,27 +243,21 @@ async def upload_measurements(
 
 @app.get("/sessions/{session_id}/measurements")
 async def get_measurements(session_id: str):
-    """Alice retrieves Bob's measurements to run sifting locally."""
-    r    = get_redis()
+    #Alice retrieves Bob's measurements to run sifting localy
+    r = get_redis()
     _get_session_or_404(r, session_id)
     meas = load_measurements(r, session_id)
     return {"session_id": session_id, "measurements": list(meas.values())}
 
 
-# ─────────────────────────────────────────────
-# Sifting bus
-# ─────────────────────────────────────────────
-
+#sifting bus
 @app.post("/sessions/{session_id}/sift", status_code=202)
 async def upload_sift(
     session_id: str,
     upload: SiftUpload,
     background_tasks: BackgroundTasks,
 ):
-    """
-    Alice posts her bases (sifting data) here.
-    KME stores them and notifies Bob to retrieve and sift locally.
-    """
+
     r = get_redis()
     session = _get_session_or_404(r, session_id)
     save_sift_upload(r, session_id, upload.model_dump())
@@ -364,7 +275,6 @@ async def upload_sift(
 
 @app.get("/sessions/{session_id}/sift")
 async def get_sift(session_id: str):
-    """Bob retrieves Alice's bases to do local sifting."""
     r      = get_redis()
     _get_session_or_404(r, session_id)
     upload = load_sift_upload(r, session_id)
@@ -374,21 +284,15 @@ async def get_sift(session_id: str):
     return upload
 
 
-# ─────────────────────────────────────────────
-# Key publication
-# ─────────────────────────────────────────────
-
+# key publish
 @app.post("/sessions/{session_id}/key")
 async def publish_key(
     session_id: str,
     upload: KeyUpload,
     background_tasks: BackgroundTasks,
 ):
-    """
-    Alice posts the final key result after local QBER + derivation.
-    KME activates the key lifecycle and notifies Bob.
-    """
-    r       = get_redis()
+   
+    r = get_redis()
     session = _get_session_or_404(r, session_id)
 
     save_key_upload(r, session_id, upload.model_dump())
@@ -417,6 +321,8 @@ async def publish_key(
         update_session(
             r, session_id,
             status="aborted",
+            key_final="",
+            qber=0.0,
             error_message=upload.error_message,
         )
         event   = "session_aborted"
@@ -430,21 +336,17 @@ async def publish_key(
         WebhookEvent(event=event, session_id=session_id, payload=payload)
     )
 
-    # Teardown QKDL
+    #stop QKDL
     background_tasks.add_task(_stop_qkdl, session_id)
 
     return {"session_id": session_id, "status": upload.status}
 
 
-# ─────────────────────────────────────────────
-# Key consumption (ETSI one-time use)
-# ─────────────────────────────────────────────
-
+# key consume here
 @app.post("/sessions/{session_id}/consume-key")
 @app.post("/keys/{session_id}/consume")           # ETSI alias
 async def consume_session_key(session_id: str):
-    """One-time key retrieval. Returns 409 if already consumed or expired."""
-    r   = get_redis()
+    r = get_redis()
     ok, key = consume_key(r, session_id)
     if not ok:
         session = load_session(r, session_id)
@@ -457,32 +359,31 @@ async def consume_session_key(session_id: str):
             "key_status": KeyStatus.CONSUMED.value}
 
 
-# ─────────────────────────────────────────────
-# Session status polling (unchanged from v6)
-# ─────────────────────────────────────────────
 
 @app.get("/sessions/{session_id}", response_model=SessionStatusResponse)
 @app.get("/keys/{session_id}",     response_model=SessionStatusResponse)
 async def get_session(session_id: str):
-    r       = get_redis()
+    r = get_redis()
     session = _get_session_or_404(r, session_id)
-    return SessionStatusResponse(**{
-        k: session.get(k, v)
-        for k, v in SessionStatusResponse.model_fields.items()
-        if k != "session_id"
-    }, session_id=session_id)
+    valid_data = {
+        k: session[k] 
+        for k in SessionStatusResponse.model_fields 
+        if k in session
+    }
+    valid_data["session_id"]=session_id
+    return SessionStatusResponse(**valid_data)
 
 
 @app.get("/sessions")
 async def list_sessions(active_only: bool = True):
-    r   = get_redis()
+    r  = get_redis()
     ids = list_active_sessions(r) if active_only else list_open_sessions(r)
     return {"sessions": ids, "count": len(ids)}
 
 
 @app.delete("/sessions/{session_id}")
 async def cancel_session(session_id: str):
-    r       = get_redis()
+    r= get_redis()
     session = _get_session_or_404(r, session_id)
     update_session(r, session_id, status="aborted",
                    error_message="Cancelled by user")
@@ -490,12 +391,8 @@ async def cancel_session(session_id: str):
     return {"status": "cancelled", "session_id": session_id}
 
 
-# ─────────────────────────────────────────────
-# QKDL coordination (KME still manages network init/stop)
-# ─────────────────────────────────────────────
-
+# QKDL coordination (KME still manages network init/stop
 async def _init_qkdl(session_id: str, n_qubits: int, loss_rate: float):
-    """KME initialises the quantum network after session creation."""
     try:
         async with httpx.AsyncClient(timeout=HTTP_TO) as client:
             resp = await client.post(
@@ -524,10 +421,6 @@ async def _stop_qkdl(session_id: str):
     except Exception as e:
         logger.warning(f"[KME] QKDL teardown partial {session_id}: {e}")
 
-
-# ─────────────────────────────────────────────
-# Health
-# ─────────────────────────────────────────────
 
 @app.get("/health")
 async def health():

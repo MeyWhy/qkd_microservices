@@ -64,7 +64,7 @@ redis-cli ping &>/dev/null || {
 echo "  Redis ready"
 
 # ── QKDL ──────────────────────────────────────────────────────
-svc qkdl 8003 qkdl.main:app
+svc qkdl 8003 qunetsim_service:app
 
 # ── KME ───────────────────────────────────────────────────────
 svc kme 8000 kme.main:app

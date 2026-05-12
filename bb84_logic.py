@@ -1,6 +1,6 @@
 import random
 from typing import Optional
-from models import Basis, QubitMeasurement
+from models import Basis, MeasurementRecord
 
 QBER_THRESHOLD = 0.11
 SAMPLE_FRACTION = 0.20
@@ -40,7 +40,7 @@ def compute_qber(
 def perform_sifting_by_id(
     alice_bits: list[int],
     alice_bases: list[str],
-    bob_measurements:dict[int, QubitMeasurement],
+    bob_measurements:dict[int, MeasurementRecord],
 ) -> tuple[list[int], list[int], list[int]]:
 
     alice_sifted = []
@@ -53,7 +53,7 @@ def perform_sifting_by_id(
         meas=bob_measurements[qid]
         if Basis(alice_bases[qid]) == meas.basis:
             alice_sifted.append(alice_bits[qid])
-            bob_sifted.append(meas.bit_res)
+            bob_sifted.append(meas.bit_result)
             matched_ids.append(qid)
 
     return alice_sifted, bob_sifted, matched_ids
