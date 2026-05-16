@@ -20,6 +20,7 @@ class EmitReq(BaseModel):
     n_qubits: int
     batch_size: int
     loss_rate: float
+    error_rate: float= 0.0
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -37,9 +37,10 @@ class ClassicalRecvResp(BaseModel):
     payload_hex: str          # "" if nothing wait
     available: bool
 class NetworkSession:
-    def __init__(self, session_id: str, loss_rate:float=0.0):
+    def __init__(self, session_id: str, loss_rate:float=0.0, error_rate:float=0.0):
         self.session_id= session_id
         self.loss_rate= loss_rate
+        self.error_rate=error_rate
         self.backend= EQSNBackend()
         self.network= Network.get_instance()
         self.alice_host:Optional[Host] = None
@@ -54,8 +55,6 @@ class NetworkSession:
         self.alice_host.add_connection('Bob')
         self.bob_host.add_connection('Alice')
         
-        if self.loss_rate>0:
-            self.network.packet_drop_rate=self.loss_rate
         self.alice_host.start()
         self.bob_host.start()
 
@@ -82,6 +81,8 @@ _sessions_lock=threading.Lock()
 def _process_batch_sync(
         session:NetworkSession, 
         batch: QubitBatch,
+        error_rate: float = 0.0,   
+
 )-> list[dict]:
     results=[]
     for qrec in batch.qubits:
@@ -101,17 +102,20 @@ def _process_batch_sync(
         bob_res={}
         bob_ready=threading.Event()
         
-        def bob_receive(res=bob_res, ready=bob_ready):
-            q=session.bob_host.get_qubit("Alice", wait=3)
+        def bob_receive(res=bob_res, ready=bob_ready, error_rate=error_rate):
+            q = session.bob_host.get_qubit("Alice", wait=3)
             if q is None:
-                res['bit']=None
-                res['basis']=None
+                res['bit']   = None
+                res['basis'] = None
             else:
-                bob_basis=random.choice(list(Basis))
-                if bob_basis==Basis.DIAGONAL:
+                bob_basis = random.choice(list(Basis))
+                if bob_basis == Basis.DIAGONAL:
                     q.H()
-                res["bit"]=q.measure()
-                res['basis']=bob_basis.value
+                measured_bit = q.measure()
+                if error_rate > 0 and random.random() < error_rate:
+                    measured_bit = 1 - measured_bit
+                res["bit"]   = measured_bit
+                res["basis"] = bob_basis.value
             ready.set()
 
         t_bob=threading.Thread(target=bob_receive, daemon=True)    
@@ -169,7 +173,7 @@ async def init_network(req: NetworkInitReq):
                 detail= "a session is already active")
         
     loop=asyncio.get_event_loop()
-    session=NetworkSession(req.session_id, loss_rate=req.loss_rate)
+    session=NetworkSession(req.session_id, loss_rate=req.loss_rate, error_rate=req.error_rate)
 
     try:
         await loop.run_in_executor(None, session.start)
@@ -194,7 +198,7 @@ async def send_batch(req: SendBatchReq):
         raise HTTPException(status_code=404, detail="Session not found")
 
     loop=asyncio.get_event_loop()
-    results= await loop.run_in_executor(None, _process_batch_sync,session, req.batch)
+    results= await loop.run_in_executor(None, _process_batch_sync,session, req.batch, session.error_rate)
     
     r=get_redis()
     measurements=[]

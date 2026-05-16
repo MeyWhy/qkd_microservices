@@ -31,9 +31,16 @@ def assemble_and_sift_task(batch_results: list[dict], session_meta: dict) -> dic
     #1st step: cocher batch as delivered
     delivered_ids: set[int] = set()
     for batch_res in batch_results:
-        if batch_res:
-            delivered_ids.update(batch_res.get("delivered", []))
-
+        if not batch_res:
+            continue
+        # If qubit_task returns {"delivered": [qid1, qid2, ...]}
+        delivered_ids.update(batch_res.get("delivered", []))
+        
+        # OR if it returns {"results": [{"qubit_id":..,"delivered":True}, ...]}
+        for r in batch_res.get("results", []):
+            if r.get("delivered"):
+                delivered_ids.add(r["qubit_id"])
+                
     n_delivered= len(delivered_ids)
 
     logger.info(
@@ -159,7 +166,9 @@ def qber_key_task(sifting_result: dict) -> dict:
     )
 
     logger.info(f"[qber_key] Session {session_id} == QBER={qber*100:.2f}%")
-
+    mismatches = sum(a != b for a, b in zip(alice_sifted, bob_sifted))
+    logger.warning(f"[debug] total mismatches={mismatches}/{len(alice_sifted)} = {mismatches/len(alice_sifted):.3f}")
+    
     if qber > QBER_THRESHOLD:
         return{
             "session_id": session_id,
@@ -172,7 +181,7 @@ def qber_key_task(sifting_result: dict) -> dict:
             "n_qubits": sifting_result["n_qubits"],
         }
 
-    
+
     key_final="".join(map(str, alice_final))
     return{
         "session_id": session_id,

@@ -67,7 +67,7 @@ async def _run_session(session_id: str)-> None:
         try:
             await _http("post", f"{QNS_URL}/network/init", client, 
                        json=NetworkInitReq(
-                           session_id=session_id, n_qubits=session.n_qubits, loss_rate=session.loss_rate,
+                           session_id=session_id, n_qubits=session.n_qubits, loss_rate=session.loss_rate, error_rate=session.error_rate,
                        ).model_dump())
             logger.info(f"[Orch] QNS initialisé — session {session_id}")
         except HTTPException as e:
@@ -93,6 +93,7 @@ async def _run_session(session_id: str)-> None:
                     "n_qubits": session.n_qubits,
                     "batch_size": session.batch_size,
                     "loss_rate": session.loss_rate,
+                    "error_rate":session.error_rate,
                 })
             session.celery_task_id=emit_data.get("celery_task_id")
             update_orch_session(r,session)
@@ -114,6 +115,7 @@ async def start_session(req: SessionStartReq, background_tasks:BackgroundTasks):
         n_qubits=req.n_qubits,
         batch_size=req.batch_size,
         loss_rate=req.loss_rate,
+        error_rate=req.error_rate,
     )
     session.transition(SessionStatus.INITIALIZING)
     save_orch_session(r, session)
@@ -170,7 +172,8 @@ async def complete_session(session_id: str, result: dict):
         session.transition(SessionStatus.ABORTED)
         session.error_message = result.get("error_message", "Erreur inconnue")
         session.qber = result.get("qber", 1.0)
-
+        session.n_delivered   = result.get("n_delivered", 0)
+        session.n_sifted      = result.get("n_sifted", 0)  
     update_orch_session(r, session)
 
     #stop qnd in bg (best-effort)

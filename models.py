@@ -15,6 +15,7 @@ class NetworkInitReq(BaseModel):
     session_id:str
     n_qubits:int= Field(gt=0, le=10000)
     loss_rate:float=Field(default=0.0, ge=0.0, le=1.0)
+    error_rate: float = Field(default=0.0, ge=0.0, le=1.0)  
 
 class NetworkInitResp(BaseModel):
     session_id: str
@@ -69,7 +70,8 @@ class SessionStartReq(BaseModel):
     n_qubits:int=Field(default=200, gt=0, le=5000)
     loss_rate:float=Field(default=0.0, ge=0.0, le=1.0)
     batch_size: int=Field(default=10, gt=0, le=100)
-
+    error_rate: float= Field(default=0.0, ge=0.0, le=1.0)
+    
 class SessionStartResp(BaseModel):
     session_id: str #key id in etsi
     statut: str 

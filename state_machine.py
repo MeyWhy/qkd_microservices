@@ -58,6 +58,7 @@ class OrchestratorSession(BaseModel):
     n_qubits:     int
     batch_size:   int
     loss_rate:    float
+    error_rate:   float = 0.0 
     key_status:     KeyStatus=KeyStatus.NONE
     key_expires_at: Optional[float] = None
 

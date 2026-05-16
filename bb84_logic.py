@@ -3,7 +3,7 @@ from typing import Optional
 from models import Basis, QubitMeasurement
 
 QBER_THRESHOLD = 0.11
-SAMPLE_FRACTION = 0.20
+SAMPLE_FRACTION = 0.35
 
 
 def compute_qber(
@@ -55,5 +55,5 @@ def perform_sifting_by_id(
             alice_sifted.append(alice_bits[qid])
             bob_sifted.append(meas.bit_res)
             matched_ids.append(qid)
-
+        
     return alice_sifted, bob_sifted, matched_ids
