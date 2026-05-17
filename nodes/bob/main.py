@@ -1,10 +1,3 @@
-"""
-nodes/bob/main.py  -- v0.8.0
-
-Fix: _receive_and_measure now uses the qkdl_url returned in the
-join_session response, instead of the module-level QKDL_URL env var.
-Also reads qkdl_url from the session_open webhook payload as early hint.
-"""
 import asyncio
 import logging
 import os

@@ -1,10 +1,3 @@
-"""
-node/base_node.py  -- v0.8.0
-
-Fix: join_session() now returns the full response dict (including qkdl_url)
-instead of storing it into self._sessions and returning it silently.
-Bob's on_session_open handler picks up qkdl_url from this return value.
-"""
 import asyncio
 import logging
 import os

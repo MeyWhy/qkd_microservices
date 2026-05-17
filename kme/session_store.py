@@ -8,7 +8,7 @@ import redis
 from models import KeyStatus
 
 REDIS_URL   = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-SESSION_TTL = 7200   # 2 hours
+SESSION_TTL = 7200   #2 hours
 GLOBAL_QKD_LOCK = "kme:global:qkd_lock"
 
 
@@ -16,7 +16,7 @@ def get_redis() -> redis.Redis:
     return redis.from_url(REDIS_URL, decode_responses=True)
 
 
-# ── Key helpers ──────────────────────────────────────────────────────────────
+#Key helpers 
 
 def _ks(sid: str)    -> str: return f"kme:session:{sid}"
 def _kq(sid: str)    -> str: return f"kme:session:{sid}:qubits"
@@ -25,7 +25,7 @@ def _ksift(sid: str) -> str: return f"kme:session:{sid}:sift"
 def _kkey(sid: str)  -> str: return f"kme:session:{sid}:key"
 
 
-# ── QKD global lock (enforces single active session) ────────────────────────
+#QKD global lock (enforces single active session) 
 
 def acquire_qkd_lock(r, session_id: str) -> bool:
     """Set the global lock to session_id. Returns True if acquired."""
@@ -43,13 +43,13 @@ def get_active_qkd_session(r) -> Optional[str]:
     return r.get(GLOBAL_QKD_LOCK)
 
 
-# ── Session CRUD ─────────────────────────────────────────────────────────────
+#Session CRUD 
 
-# Terminal statuses — sessions in these states are removed from the active set.
-# BUG FIX: the previous version only added to active when status == "open".
-# The KME now uses SessionStatus enum values (initializing, sending, done,
-# aborted) so sessions were never tracked in kme:sessions:active, making
-# list_active_sessions() always return empty and breaking metrics + health.
+#Terminal statuses — sessions in these states are removed from the active set.
+#BUG FIX: the previous version only added to active when status == "open".
+#The KME now uses SessionStatus enum values (initializing, sending, done,
+#aborted) so sessions were never tracked in kme:sessions:active, making
+#list_active_sessions() always return empty and breaking metrics + health.
 _TERMINAL_STATUSES = {"done", "aborted"}
 _ACTIVE_STATUSES   = {"open", "waiting", "initializing", "sending", "sifting"}
 
@@ -62,7 +62,7 @@ def save_session(r: redis.Redis, session: dict) -> None:
 
     if status in _ACTIVE_STATUSES:
         r.sadd("kme:sessions:active", sid)
-        # "open" is kept for backward-compat with list_open_sessions
+        #"open" is kept for backward-compat with list_open_sessions
         if status == "open":
             r.sadd("kme:sessions:open", sid)
     elif status in _TERMINAL_STATUSES:
@@ -90,7 +90,7 @@ def list_active_sessions(r: redis.Redis) -> list[str]:
     return list(r.smembers("kme:sessions:active"))
 
 
-# ── Qubit bus ────────────────────────────────────────────────────────────────
+#Qubit bus 
 
 def push_qubit_batch(r: redis.Redis, session_id: str, batch: dict) -> None:
     r.rpush(_kq(session_id), json.dumps(batch))
@@ -106,7 +106,7 @@ def qubit_batch_count(r: redis.Redis, session_id: str) -> int:
     return r.llen(_kq(session_id))
 
 
-# ── Measurement bus ──────────────────────────────────────────────────────────
+#Measurement bus 
 
 def save_measurements(
     r: redis.Redis, session_id: str, upload: dict
@@ -126,7 +126,7 @@ def load_measurements(
     return {int(k): json.loads(v) for k, v in raw.items()}
 
 
-# ── Sifting bus ──────────────────────────────────────────────────────────────
+#Sifting bus 
 
 def save_sift_upload(r: redis.Redis, session_id: str, upload: dict) -> None:
     r.set(_ksift(session_id), json.dumps(upload), ex=SESSION_TTL)
@@ -137,7 +137,7 @@ def load_sift_upload(r: redis.Redis, session_id: str) -> Optional[dict]:
     return json.loads(raw) if raw else None
 
 
-# ── Key lifecycle ────────────────────────────────────────────────────────────
+#Key lifecycle 
 
 KEY_TTL = int(os.getenv("BB84_KEY_TTL", "300"))
 
@@ -181,7 +181,7 @@ def consume_key(
     return True, session.get("key_final", "")
 
 
-# ── Cleanup ──────────────────────────────────────────────────────────────────
+#Cleanup 
 
 def delete_session(r: redis.Redis, session_id: str) -> None:
     r.delete(

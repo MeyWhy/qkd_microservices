@@ -269,3 +269,1294 @@ INFO:     Waiting for application shutdown.
 INFO:node.base:[alice-1] Stopped
 INFO:     Application shutdown complete.
 INFO:     Finished server process [15937]
+INFO:     Started server process [589]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[alice-1] Registered → node_id=da71c311
+INFO:node.base:[alice-1] Started  node_id=da71c311 role=sender
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session 302c6bb1 created n_qubits=200 qkdl=http://localhost:8003
+INFO:     127.0.0.1:42578 - "POST /start?receiver_label=bob-1&n_qubits=200 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42582 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined 302c6bb1 -- starting qubit send
+INFO:alice:[Alice] Transmission start session=302c6bb1 total=200 batch_size=10 n_batches=20 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/19 session=302c6bb1 batch_delivered=10 total=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/19 session=302c6bb1 batch_delivered=10 total=20
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/19 session=302c6bb1 batch_delivered=10 total=30
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/19 session=302c6bb1 batch_delivered=10 total=40
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/19 session=302c6bb1 batch_delivered=10 total=50
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 5/19 session=302c6bb1 batch_delivered=10 total=60
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 6/19 session=302c6bb1 batch_delivered=10 total=70
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 7/19 session=302c6bb1 batch_delivered=10 total=80
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 8/19 session=302c6bb1 batch_delivered=10 total=90
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 9/19 session=302c6bb1 batch_delivered=10 total=100
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 10/19 session=302c6bb1 batch_delivered=10 total=110
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 11/19 session=302c6bb1 batch_delivered=10 total=120
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 12/19 session=302c6bb1 batch_delivered=10 total=130
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 13/19 session=302c6bb1 batch_delivered=10 total=140
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 14/19 session=302c6bb1 batch_delivered=10 total=150
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 15/19 session=302c6bb1 batch_delivered=10 total=160
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 16/19 session=302c6bb1 batch_delivered=10 total=170
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 17/19 session=302c6bb1 batch_delivered=10 total=180
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 409 Conflict"
+INFO:     127.0.0.1:51162 - "POST /start?receiver_label=bob-1&n_qubits=200&loss_rate=0.1 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/mey/venv313/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mey/venv313/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mey/venv313/lib/python3.13/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/mey/venv313/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/mey/venv313/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/mey/venv313/lib/python3.13/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/mey/venv313/lib/python3.13/site-packages/fastapi/routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/mey/venv313/lib/python3.13/site-packages/fastapi/routing.py", line 328, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mey/projects/v5/nodes/alice/main.py", line 373, in start_session
+    session_id = await alice.start_bb84_session(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/home/mey/projects/v5/nodes/alice/main.py", line 63, in start_bb84_session
+    resp.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mey/venv313/lib/python3.13/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '409 Conflict' for url 'http://localhost:8000/sessions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 18/19 session=302c6bb1 batch_delivered=10 total=190
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 19/19 session=302c6bb1 batch_delivered=10 total=200
+INFO:alice:[Alice] All batches sent session=302c6bb1 delivered=200/200
+INFO:     127.0.0.1:51164 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] measurements_ready → sifting 302c6bb1 n=200
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/measurements "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Sifting session=302c6bb1 raw_meas_count=200
+INFO:alice:[Alice] Sifting done session=302c6bb1 n_sifted=96/200
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/sift "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] QBER=0.00% session=302c6bb1 threshold=11.0%
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/302c6bb1-a41c-4f04-a6a4-08d5ec0c549e/key "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Key posted session=302c6bb1 QBER=0.00% key_len=77
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session 40e6396d created n_qubits=200 qkdl=http://localhost:8003
+INFO:     127.0.0.1:56996 - "POST /start?receiver_label=bob-1&n_qubits=200&loss_rate=0.1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57000 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined 40e6396d -- starting qubit send
+INFO:alice:[Alice] Transmission start session=40e6396d total=200 batch_size=10 n_batches=20 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/19 session=40e6396d batch_delivered=4 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 5/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 6/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 7/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 8/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 9/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 10/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 11/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 12/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 13/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 14/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 15/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 16/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 17/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 18/19 session=40e6396d batch_delivered=0 total=4
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 19/19 session=40e6396d batch_delivered=0 total=4
+INFO:alice:[Alice] All batches sent session=40e6396d delivered=4/200
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/40e6396d-20f6-49d1-8e28-3dbed3c5ee07/measurements "HTTP/1.1 200 OK"
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[alice-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [589]
+INFO:     Started server process [7831]
+INFO:     Waiting for application startup.
+WARNING:node.base:[alice-1] KME unreachable, retrying in 3.0s: All connection attempts failed
+INFO:     Started server process [7894]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[alice-1] Registered → node_id=112469cf
+INFO:node.base:[alice-1] Started  node_id=112469cf role=sender
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[alice-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7894]
+INFO:     Started server process [7994]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[alice-1] Registered → node_id=d3e7c42f
+INFO:node.base:[alice-1] Started  node_id=d3e7c42f role=sender
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session 8278f96d created n_qubits=200 qkdl=http://localhost:8003
+INFO:     127.0.0.1:52660 - "POST /start?receiver_label=bob-1&n_qubits=200&loss_rate=0.1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52662 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined 8278f96d — starting qubit send
+INFO:alice:[Alice] Transmission start session=8278f96d total=200 batches=20 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/19 session=8278f96d delivered=9
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/19 session=8278f96d delivered=9
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/19 session=8278f96d delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/19 session=8278f96d delivered=0
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/19 session=8278f96d delivered=0
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 5/19 session=8278f96d delivered=0
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/8278f96d-deac-4ecd-9ee9-99a26c188dbb/measurements "HTTP/1.1 200 OK"
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[alice-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7994]
+INFO:     Started server process [854]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[alice-1] Registered → node_id=92f92825
+INFO:node.base:[alice-1] Started  node_id=92f92825 role=sender
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session 9adc920f created n_qubits=200 qkdl=http://localhost:8003
+INFO:     127.0.0.1:60332 - "POST /start?receiver_label=bob-1&n_qubits=200&batch_size=10&loss_rate=0&retry_enabled=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60338 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined 9adc920f — starting qubit send
+INFO:alice:[Alice] Transmission start session=9adc920f total=200 batches=20 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 5/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 6/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 7/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 8/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 9/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 10/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 11/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 12/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 13/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 14/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 15/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 16/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 17/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 18/19 session=9adc920f delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 19/19 session=9adc920f delivered=10
+INFO:alice:[Alice] All batches sent session=9adc920f total_delivered=200/200
+INFO:     127.0.0.1:35416 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] measurements_ready → sifting 9adc920f n=200
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/measurements "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Sifting session=9adc920f raw_meas=200
+INFO:alice:[Alice] Sifted session=9adc920f n_sifted=96/200
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/sift "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] QBER=0.00% session=9adc920f threshold=11.0%
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/9adc920f-83db-4fa5-a796-bafdc120f2aa/key "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Key posted session=9adc920f QBER=0.00% key_len=77
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session f507a98c created n_qubits=200 qkdl=http://localhost:8003
+INFO:     127.0.0.1:48056 - "POST /start?receiver_label=bob-2&n_qubits=200&batch_size=10&loss_rate=0&retry_enabled=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48062 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined f507a98c — starting qubit send
+INFO:alice:[Alice] Transmission start session=f507a98c total=200 batches=20 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 5/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 6/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 7/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 8/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 9/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 10/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 11/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 12/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 13/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 14/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 15/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 16/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 17/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 18/19 session=f507a98c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 19/19 session=f507a98c delivered=10
+INFO:alice:[Alice] All batches sent session=f507a98c total_delivered=200/200
+INFO:     127.0.0.1:49188 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] measurements_ready → sifting f507a98c n=200
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/measurements "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Sifting session=f507a98c raw_meas=200
+INFO:alice:[Alice] Sifted session=f507a98c n_sifted=103/200
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/sift "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] QBER=0.00% session=f507a98c threshold=11.0%
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/f507a98c-5983-46e0-bd3b-2623d1eb8abc/key "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Key posted session=f507a98c QBER=0.00% key_len=83
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session 1bcd4c43 created n_qubits=200 qkdl=http://localhost:8003
+INFO:     127.0.0.1:60850 - "POST /start?receiver_label=bob-3&n_qubits=200&batch_size=10&loss_rate=0&retry_enabled=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60858 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined 1bcd4c43 — starting qubit send
+INFO:alice:[Alice] Transmission start session=1bcd4c43 total=200 batches=20 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 5/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 6/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 7/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 8/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 9/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 10/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 11/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 12/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 13/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 14/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 15/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 16/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 17/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 18/19 session=1bcd4c43 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 19/19 session=1bcd4c43 delivered=10
+INFO:alice:[Alice] All batches sent session=1bcd4c43 total_delivered=200/200
+INFO:     127.0.0.1:50344 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] measurements_ready → sifting 1bcd4c43 n=200
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/measurements "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Sifting session=1bcd4c43 raw_meas=200
+INFO:alice:[Alice] Sifted session=1bcd4c43 n_sifted=108/200
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/sift "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] QBER=0.00% session=1bcd4c43 threshold=11.0%
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/1bcd4c43-86e1-4898-b031-de5accbf9771/key "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Key posted session=1bcd4c43 QBER=0.00% key_len=87
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session b948af5c created n_qubits=50 qkdl=http://localhost:8003
+INFO:     127.0.0.1:52420 - "POST /start?receiver_label=bob-1&n_qubits=50&batch_size=10&loss_rate=0&retry_enabled=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52432 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined b948af5c — starting qubit send
+INFO:alice:[Alice] Transmission start session=b948af5c total=50 batches=5 qkdl=http://localhost:8003
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/4 session=b948af5c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/4 session=b948af5c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/4 session=b948af5c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/4 session=b948af5c delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8003/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/4 session=b948af5c delivered=10
+INFO:alice:[Alice] All batches sent session=b948af5c total_delivered=50/50
+INFO:     127.0.0.1:60586 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] measurements_ready → sifting b948af5c n=50
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/measurements "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Sifting session=b948af5c raw_meas=50
+INFO:alice:[Alice] Sifted session=b948af5c n_sifted=28/50
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/sift "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] QBER=0.00% session=b948af5c threshold=11.0%
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/b948af5c-8d8b-4328-910c-a7cfd253485d/key "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Key posted session=b948af5c QBER=0.00% key_len=23
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[alice-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [854]
+INFO:     Started server process [28056]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[alice-1] Registered → node_id=861ae786
+INFO:node.base:[alice-1] Started  node_id=861ae786 role=sender
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[alice-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28056]
+INFO:     Started server process [28136]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[alice-1] Registered → node_id=6e479733
+INFO:node.base:[alice-1] Started  node_id=6e479733 role=sender
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] Session 506daba8 created n_qubits=50 qkdl=http://localhost:8023
+INFO:     127.0.0.1:35324 - "POST /start?receiver_label=bob-1&n_qubits=50&batch_size=10&loss_rate=0&retry_enabled=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35330 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] Receiver joined 506daba8 — starting qubit send
+INFO:alice:[Alice] Transmission start session=506daba8 total=50 batches=5 qkdl=http://localhost:8023
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8023/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 0/4 session=506daba8 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8023/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 1/4 session=506daba8 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8023/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 2/4 session=506daba8 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8023/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 3/4 session=506daba8 delivered=10
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/measurements "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8023/batch/send "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Batch 4/4 session=506daba8 delivered=10
+INFO:alice:[Alice] All batches sent session=506daba8 total_delivered=50/50
+INFO:     127.0.0.1:60634 - "POST /webhook HTTP/1.1" 200 OK
+INFO:alice:[Alice] measurements_ready → sifting 506daba8 n=50
+INFO:httpx:HTTP Request: GET http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/measurements "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Sifting session=506daba8 raw_meas=50
+INFO:alice:[Alice] Sifted session=506daba8 n_sifted=27/50
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/sift "HTTP/1.1 202 Accepted"
+INFO:alice:[Alice] QBER=0.00% session=506daba8 threshold=11.0%
+INFO:httpx:HTTP Request: POST http://localhost:8000/sessions/506daba8-f0b3-4412-b71f-da5e1fc33257/key "HTTP/1.1 200 OK"
+INFO:alice:[Alice] Key posted session=506daba8 QBER=0.00% key_len=22
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[alice-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28136]

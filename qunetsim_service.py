@@ -19,7 +19,7 @@ try:
         QubitBatch, NetworkStopReq,
     )
 except ModuleNotFoundError:
-    from models import (                                   #flat layout (v5/v6)
+    from models import (
         Basis, NetworkInitReq, NetworkInitResp,
         MeasurementRecord, SendBatchReq, SendBatchResp,
         QubitBatch, NetworkStopReq,
@@ -32,7 +32,7 @@ logger = logging.getLogger("qkdl")
 class ClassicalSendReq(BaseModel):
     session_id:  str
     payload_hex: str
-    mode:        str = "direct"   #"direct" | "broadcast" to be tested
+    mode:        str = "direct"
 
 
 class ClassicalSendResp(BaseModel):
@@ -47,23 +47,50 @@ class ClassicalRecvResp(BaseModel):
     available:   bool
 
 
+#Cooldown state 
+#After a session stops, we block new /network/init for COOLDOWN_S seconds
+#so QuNetSim's internal threads can exit cleanly before a new Network is
+#started on the same singleton.
+
+COOLDOWN_S        = 2.5
+_cooldown_until:  float         = 0.0          #epoch time when cooldown expires
+_cooldown_lock:   threading.Lock = threading.Lock()
+
+
+def _set_cooldown() -> None:
+    with _cooldown_lock:
+        global _cooldown_until
+        _cooldown_until = time.time() + COOLDOWN_S
+
+
+def _cooldown_remaining() -> float:
+    with _cooldown_lock:
+        return max(0.0, _cooldown_until - time.time())
+
+
+def _clear_cooldown() -> None:
+    with _cooldown_lock:
+        global _cooldown_until
+        _cooldown_until = 0.0
+
+
+#NetworkSession 
 
 class NetworkSession:
     def __init__(self, session_id: str, loss_rate: float = 0.0):
-        self.session_id   = session_id
-        self.loss_rate    = loss_rate
-        self.backend      = None   #assigned in start()
-        self.network      = None   #assigned in start()
-        self.alice_host   = None
-        self.bob_host     = None
-        self._send_lock   = threading.Lock()
-        self._active      = False
+        self.session_id  = session_id
+        self.loss_rate   = loss_rate
+        self.backend     = None
+        self.network     = None
+        self.alice_host  = None
+        self.bob_host    = None
+        self._send_lock  = threading.Lock()
+        self._active     = False
         self._meas_queue: list[dict] = []
-        self._meas_lock   = threading.Lock()
-        #Unique names prevent host registry collision after singleton reset
-        sid6 = session_id.replace("-", "")[:6]
-        self._alice_name  = f"Alice-{sid6}"
-        self._bob_name    = f"Bob-{sid6}"
+        self._meas_lock  = threading.Lock()
+        sid6             = session_id.replace("-", "")[:6]
+        self._alice_name = f"Alice-{sid6}"
+        self._bob_name   = f"Bob-{sid6}"
 
     def start(self):
         self.backend = EQSNBackend()
@@ -81,7 +108,7 @@ class NetworkSession:
         self.network.add_host(self.bob_host)
         self._active = True
         logger.info(f"[QKDL] Session {self.session_id} started")
-    
+
     def stop(self):
         if self._active:
             try:
@@ -90,17 +117,21 @@ class NetworkSession:
                 logger.warning(f"[QKDL] Stop error: {e}")
             self._active = False
 
-            #Reset the QuNetSim singleton so next session gets a fresh Network
             try:
                 if hasattr(Network, '_instance'):
                     Network._instance = None
-                #Allow internal threads ~300ms to exit their loops
+                #Give internal threads time to die before cooldown expires
                 time.sleep(0.3)
             except Exception as e:
                 logger.warning(f"[QKDL] Singleton reset error: {e}")
 
-            logger.info(f"[QKDL] Session {self.session_id} stopped + singleton reset")
-    
+            #Start cooldown so the next /network/init waits for full cleanup
+            _set_cooldown()
+            logger.info(
+                f"[QKDL] Session {self.session_id} stopped "
+                f"(cooldown {COOLDOWN_S}s)"
+            )
+
     def is_active(self) -> bool:
         return self._active
 
@@ -117,18 +148,19 @@ class NetworkSession:
             return len(self._meas_queue)
 
 
-_sessions:      dict[str, NetworkSession] = {}
-_sessions_lock  = threading.Lock()
+_sessions:     dict[str, NetworkSession] = {}
+_sessions_lock = threading.Lock()
 
 _classical_inbox: dict[str, list[str]] = {}
 _classical_lock   = threading.Lock()
 
 
+#Qubit processing 
+
 def _process_batch_sync(
     session: NetworkSession,
     batch:   QubitBatch,
 ) -> list[dict]:
-
     results = []
 
     for qrec in batch.qubits:
@@ -136,7 +168,6 @@ def _process_batch_sync(
         bit   = qrec.bit
         basis = qrec.basis
 
-        #simulate loss
         if session.loss_rate > 0 and random.random() < session.loss_rate:
             results.append({
                 "qubit_id": qid, "delivered": False,
@@ -147,7 +178,10 @@ def _process_batch_sync(
         bob_res   = {}
         bob_ready = threading.Event()
 
-        def bob_receive(res=bob_res, ready=bob_ready,bh=session.bob_host, an=session._alice_name ):
+        def bob_receive(
+            res=bob_res, ready=bob_ready,
+            bh=session.bob_host, an=session._alice_name,
+        ):
             q = bh.get_qubit(an, wait=3)
             if q is None:
                 res["bit"]   = None
@@ -160,9 +194,12 @@ def _process_batch_sync(
                 res["basis"] = bob_basis.value
             ready.set()
 
-        t_bob = threading.Thread(target=bob_receive, daemon=True)
+        t_bob = threading.Thread(
+            target=bob_receive, daemon=True,
+            name=f"bob-recv-{session.session_id[:6]}-q{qid}",
+        )
         t_bob.start()
-        time.sleep(0.003)   #reduced from 0.01 -> 0.003 for better latency
+        time.sleep(0.003)
 
         with session._send_lock:
             q = Qubit(session.alice_host)
@@ -170,30 +207,33 @@ def _process_batch_sync(
                 q.X()
             if basis == Basis.DIAGONAL:
                 q.H()
-            session.alice_host.send_qubit(session._bob_name, q, await_ack=False)
+            session.alice_host.send_qubit(
+                session._bob_name, q, await_ack=False
+            )
 
         bob_ready.wait(timeout=4.0)
         t_bob.join(timeout=4.0)
 
         delivered = bob_res.get("bit") is not None
-        result    = {
+        results.append({
             "qubit_id":  qid,
             "delivered": delivered,
             "bob_basis": bob_res.get("basis"),
-            "bob_bit":   bob_res.get("bit"),    #internal key kept as bob_bit
-        }
-        results.append(result)
+            "bob_bit":   bob_res.get("bit"),
+        })
 
         if delivered:
             session.push_measurement({
                 "qubit_id":   qid,
                 "basis":      bob_res.get("basis"),
-                "bit_result": bob_res.get("bit"),  
+                "bit_result": bob_res.get("bit"),
                 "delivered":  True,
             })
 
     return results
 
+
+#App 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -208,18 +248,29 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="QKDL - QKD Link Layer (QuNetSim)",
     description="Quantum transport layer for BB84",
-    version="0.7.0",
+    version="0.8.1",
     lifespan=lifespan,
 )
+
+
 @app.post("/network/init", response_model=NetworkInitResp)
 async def init_network(req: NetworkInitReq):
+    #Cooldown check 
+    remaining = _cooldown_remaining()
+    if remaining > 0:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"QKDL cooling down after previous session stop. "
+                f"Retry in {remaining:.1f}s."
+            ),
+        )
+
     with _sessions_lock:
-        #Always clean dead sessions first
         dead = [sid for sid, s in _sessions.items() if not s.is_active()]
         for sid in dead:
             del _sessions[sid]
 
-        #Same session already active -> idempotent return
         if req.session_id in _sessions:
             return NetworkInitResp(
                 session_id=req.session_id,
@@ -227,17 +278,18 @@ async def init_network(req: NetworkInitReq):
                 message="Already active",
             )
 
-        #Different session still alive -> real conflict
         if _sessions:
             active = list(_sessions.keys())
             raise HTTPException(
                 status_code=409,
-                detail=f"Session already active: {active[0][:8]}. "
-                       f"Stop it first via POST /network/stop."
+                detail=(
+                    f"Session already active: {active[0][:8]}. "
+                    f"Stop it first via POST /network/stop."
+                ),
             )
 
     session = NetworkSession(req.session_id, loss_rate=req.loss_rate)
-    loop = asyncio.get_event_loop()
+    loop    = asyncio.get_event_loop()
     try:
         await loop.run_in_executor(None, session.start)
     except Exception as e:
@@ -262,14 +314,15 @@ async def stop_network(req: NetworkStopReq):
     if session:
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, session.stop)
+        #session.stop() already sets the cooldown
     return {"statut": "stopped", "session_id": req.session_id}
+
 
 @app.post("/network/reset")
 async def reset_network():
     """
-    Force-stop ALL sessions. Use between test runs to clear stale state.
-    This is safe -- QuNetSim's Network is a singleton that needs a clean
-    stop before a new session can init.
+    Force-stop ALL sessions and clear cooldown.
+    Use between test runs to get a clean slate immediately.
     """
     loop = asyncio.get_event_loop()
     with _sessions_lock:
@@ -281,23 +334,19 @@ async def reset_network():
     for session in sessions_to_stop:
         await loop.run_in_executor(None, session.stop)
 
-    #Extra: force QuNetSim's global Network instance to reset
-    #so the next Network.get_instance().start() works cleanly
     try:
-        from qunetsim.components import Network
-        net = Network.get_instance()
-        net.stop(stop_hosts=True)
+        from qunetsim.components import Network as _Net
+        _Net.get_instance().stop(stop_hosts=True)
     except Exception:
         pass
 
-    return {
-        "statut":   "reset",
-        "stopped":  len(sessions_to_stop),
-    }
-    
+    _clear_cooldown()   #reset clears cooldown so next init works immediately
+
+    return {"statut": "reset", "stopped": len(sessions_to_stop)}
+
+
 @app.post("/batch/send", response_model=SendBatchResp)
 async def send_batch(req: SendBatchReq):
-
     with _sessions_lock:
         session = _sessions.get(req.session_id)
 
@@ -318,17 +367,6 @@ async def send_batch(req: SendBatchReq):
 
 @app.get("/qubit/receive/{session_id}")
 async def receive_qubit(session_id: str):
-    """
-    Bob's node polls this to retrieve measured qubits one at a time.
-
-    Returns:
-      - The next measurement if available:
-        {qubit_id, basis, bit_result, delivered, queue_empty: false}
-      - {qubit_id: null, queue_empty: true} if nothing waiting
-
-    Bob drains this queue after Alice has uploaded all batches.
-    The KME notifies Bob when measurements are ready (measurements_ready event).
-    """
     with _sessions_lock:
         session = _sessions.get(session_id)
 
@@ -341,7 +379,7 @@ async def receive_qubit(session_id: str):
             "session_id":  session_id,
             "qubit_id":    meas["qubit_id"],
             "basis":       meas["basis"],
-            "bit_result":  meas["bit_result"],  
+            "bit_result":  meas["bit_result"],
             "delivered":   meas["delivered"],
             "queue_empty": False,
             "remaining":   session.measurement_count(),
@@ -362,19 +400,11 @@ async def qubit_count(session_id: str):
         session = _sessions.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    return {
-        "session_id": session_id,
-        "count":      session.measurement_count(),
-    }
+    return {"session_id": session_id, "count": session.measurement_count()}
 
 
 @app.post("/classical/send", response_model=ClassicalSendResp)
 async def send_classical(req: ClassicalSendReq):
-    """
-    Sends a classical message (ciphertext) from Alice to Bob
-    using the live QuNetSim hosts.
-    Stores received payload in the classical inbox for Bob to retrieve.
-    """
     with _sessions_lock:
         session = _sessions.get(req.session_id)
 
@@ -427,7 +457,6 @@ async def send_classical(req: ClassicalSendReq):
 
 @app.get("/classical/recv/{session_id}", response_model=ClassicalRecvResp)
 async def recv_classical(session_id: str):
-    """Retrieves the next classical message from Bob's inbox."""
     with _classical_lock:
         inbox = _classical_inbox.get(session_id, [])
         if inbox:
@@ -445,16 +474,16 @@ async def recv_classical(session_id: str):
 
 @app.get("/health")
 async def health():
+    remaining = _cooldown_remaining()
     with _sessions_lock:
         active = list(_sessions.keys())
-        counts = {
-            sid: _sessions[sid].measurement_count()
-            for sid in active
-        }
+        counts = {sid: _sessions[sid].measurement_count() for sid in active}
     return {
-        "statut":          "ok",
-        "active_sessions": active,
+        "statut":             "ok",
+        "active_sessions":    active,
         "measurement_queues": counts,
+        "cooldown_remaining": round(remaining, 2),
+        "ready":              remaining == 0 and not active,
     }
 
 
@@ -462,4 +491,3 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("QKDL_PORT", "8003"))
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")
- 
