@@ -19,7 +19,9 @@ celery_app.conf.update(
     },
     task_routes={
         "workers.qubit_tasks.send_batch_task":        {"queue": "qubit_send"},
-        "workers.sifting_tasks.batch_complete_task":  {"queue": "sifting"},
+        "workers.sifting_tasks.assemble_and_sift_task": {"queue": "sifting"},
+        "workers.sifting_tasks.qber_key_task":          {"queue": "sifting"},
+        "workers.sifting_tasks.notify_kme_task":        {"queue": "sifting"},
     },
     # Each worker pulls one task at a time  prevents a single worker
     # monopolising all qubit batches while others sit idle.

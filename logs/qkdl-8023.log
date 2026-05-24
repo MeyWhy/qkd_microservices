@@ -1,0 +1,12 @@
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8023): address already in use
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8023): address already in use
+2026-05-23 22:02:44,872: [QKDL] *** Eve registered as interceptor session=af87e0ce label=eve-1 ***
+2026-05-23 22:03:10,664: [QKDL] *** Eve registered as interceptor session=e85052c7 label=eve-1 ***
+2026-05-23 22:03:52,486: [QKDL] *** Eve registered as interceptor session=3e8ea06e label=eve-1 ***
+2026-05-23 22:04:32,558: [QKDL] *** Eve registered as interceptor session=30db9058 label=eve-1 ***
+2026-05-23 22:05:22,579: [QKDL] *** Eve registered as interceptor session=75ddeacb label=eve-1 ***
+2026-05-23 22:06:14,860: [QKDL] *** Eve registered as interceptor session=39556777 label=eve-1 ***
+2026-05-23 22:08:05,919: [QKDL] *** Eve registered as interceptor session=93da0ad5 label=eve-1 ***
+2026-05-23 22:09:59,363: [QKDL] *** Eve registered as interceptor session=a5263171 label=eve-1 ***
+2026-05-23 22:13:31,896: [QKDL] *** Eve registered as interceptor session=847ad4fc label=eve-1 ***
+2026-05-23 22:18:15,168: [QKDL] *** Eve registered as interceptor session=d66b368f label=eve-1 ***

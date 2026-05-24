@@ -9,6 +9,7 @@ from models import KeyStatus
 
 REDIS_URL   = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 SESSION_TTL = 7200   # 2 hours
+STATE_TTL= 7200
 
 # NOTE: the old GLOBAL_QKD_LOCK / acquire_qkd_lock / release_qkd_lock /
 # get_active_qkd_session functions have been removed.
@@ -172,3 +173,27 @@ def delete_session(r: redis.Redis, session_id: str) -> None:
     )
     r.srem("kme:sessions:open",   session_id)
     r.srem("kme:sessions:active", session_id)
+
+
+
+def _key(session_id: str) -> str:
+    return f"kme:alice_state:{session_id}"
+ 
+ 
+def save_alice_state(session_id: str, bits: list[int], bases: list[str]) -> None:
+    r = get_redis()
+    r.set(
+        _key(session_id),
+        json.dumps({"bits": bits, "bases": bases}),
+        ex=STATE_TTL,
+    )
+ 
+ 
+def load_alice_state(session_id: str) -> dict | None:
+    r   = get_redis()
+    raw = r.get(_key(session_id))
+    return json.loads(raw) if raw else None
+ 
+ 
+def delete_alice_state(session_id: str) -> None:
+    get_redis().delete(_key(session_id))

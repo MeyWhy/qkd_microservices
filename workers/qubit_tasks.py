@@ -1,15 +1,19 @@
+"""
+QTT — Quantum Transmission Task
 
-import os
+Sends one qubit batch to the QKDL via POST /batch/send.
+Called N times in parallel as the chord header.
+Returns a delivery summary consumed by ST (assemble_and_sift_task).
+"""
 import logging
 import httpx
 
 from workers.celery_config import celery_app
 from models import QubitBatch
 
-logger  = logging.getLogger("worker.qubit")
+logger = logging.getLogger("worker.qubit")
 
-#Celery task: send one qubit batch to the QKDL.
-#called N times in a chord by Alice (one task per batch).
+
 @celery_app.task(
     bind=True,
     name="workers.qubit_tasks.send_batch_task",
@@ -17,7 +21,21 @@ logger  = logging.getLogger("worker.qubit")
     default_retry_delay=1.0,
     queue="qubit_send",
 )
-def send_batch_task(self, session_id: str, batch_payload: dict, qkdl_url: str) -> dict:
+def send_batch_task(
+    self,
+    session_id:    str,
+    batch_payload: dict,
+    qkdl_url:      str,
+) -> dict:
+    """
+    POST one qubit batch to the assigned QKDL instance.
+
+    qkdl_url is passed explicitly so concurrent sessions on different
+    QKDL instances never cross-wire — each chord carries its own URL.
+
+    Returns:
+        {session_id, batch_id, delivered: [qid, ...], failed: [qid, ...]}
+    """
     qkdl_url = qkdl_url.rstrip("/")
 
     try:
@@ -34,10 +52,9 @@ def send_batch_task(self, session_id: str, batch_payload: dict, qkdl_url: str) -
         failed    = [r["qubit_id"] for r in results if not r.get("delivered")]
 
         logger.debug(
-            f"[batch {data.get('batch_id')}] session={session_id[:8]} "
-            f"delivered={len(delivered)} failed={len(failed)} qkdl={qkdl_url}"
+            f"[QTT batch={data.get('batch_id')}] session={session_id[:8]} "
+            f"delivered={len(delivered)} failed={len(failed)}"
         )
-
         return {
             "session_id": session_id,
             "batch_id":   data.get("batch_id"),
@@ -47,27 +64,21 @@ def send_batch_task(self, session_id: str, batch_payload: dict, qkdl_url: str) -
 
     except httpx.HTTPStatusError as e:
         logger.warning(
-            f"[batch] HTTP {e.response.status_code} "
-            f"session={session_id[:8]}  retry {self.request.retries}"
+            f"[QTT] HTTP {e.response.status_code} "
+            f"session={session_id[:8]} retry={self.request.retries}"
         )
         raise self.retry(exc=e)
 
     except httpx.RequestError as e:
-        logger.warning(
-            f"[batch] QKDL unreachable session={session_id[:8]}: {e}"
-        )
+        logger.warning(f"[QTT] QKDL unreachable session={session_id[:8]}: {e}")
         raise self.retry(exc=e)
 
     except Exception as e:
-        logger.error(
-            f"[batch] Unexpected error session={session_id[:8]}: {e}"
-        )
-        # Return a failed record so the chord still completes
-        batch    = QubitBatch.model_validate(batch_payload)
-        batch_id = batch.batch_id
+        logger.error(f"[QTT] Unexpected error session={session_id[:8]}: {e}")
+        batch = QubitBatch.model_validate(batch_payload)
         return {
             "session_id": session_id,
-            "batch_id":   batch_id,
+            "batch_id":   batch.batch_id,
             "delivered":  [],
             "failed":     [q.qubit_id for q in batch.qubits],
         }
