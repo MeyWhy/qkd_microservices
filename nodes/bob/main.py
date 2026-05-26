@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.INFO)
 
 KME_URL  = os.getenv("KME_URL",  "http://localhost:8000")
 MY_URL   = os.getenv("BOB_URL",  "http://localhost:8002")
+IDLE_EXIT_AFTER = 8.0  
 
 QKDL_SECS_PER_QUBIT = 8.0
 QKDL_FIXED_OVERHEAD  = 30.0
@@ -96,7 +97,8 @@ class BobNode(BaseNode):
             + QKDL_FIXED_OVERHEAD
             + n_qubits * QKDL_SECS_PER_QUBIT
         )
-
+        last_received_at = time.time() 
+        
         logger.info(
             f"[Bob] Receive loop started session={session_id[:8]} "
             f"target={n_qubits} qkdl={qkdl_url} "
@@ -125,7 +127,7 @@ class BobNode(BaseNode):
                 data = resp.json()
 
                 if data.get("queue_empty"):
-                    if len(measurements) > 0 and len(measurements) % 25 == 0:
+                    if measurements and (time.time() - last_received_at) > IDLE_EXIT_AFTER:
                         logger.info(
                             f"[Bob] Queue empty mid-session={session_id[:8]} "
                             f"got={len(measurements)} "
@@ -147,7 +149,8 @@ class BobNode(BaseNode):
                     basis=Basis(raw_basis),
                     bit_result=bit_result,
                 ))
-
+                last_received_at = time.time() 
+                
                 if len(measurements) % 25 == 0:
                     logger.info(
                         f"[Bob] Progress session={session_id[:8]} "

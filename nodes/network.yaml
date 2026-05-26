@@ -82,6 +82,104 @@ nodes:
       BOB_URL:   "http://localhost:8203"
       QKDL_URL:  "http://localhost:8023"
 
+  - label:   alice-4
+    role:    sender
+    module:  nodes.alice.main
+    port:    8104
+    env:
+      ALICE_LABEL: alice-4
+      ALICE_URL:   "http://localhost:8104"
+      BATCH_SIZE:  "10"
+      QKDL_URL:    "http://localhost:8033"
+
+  - label:   bob-4
+    role:    receiver
+    module:  nodes.bob.main
+    port:    8204
+    env:
+      BOB_LABEL: bob-4
+      BOB_URL:   "http://localhost:8204"
+      QKDL_URL:  "http://localhost:8033"
+
+
+  - label:   alice-5
+    role:    sender
+    module:  nodes.alice.main
+    port:    8105
+    env:
+      ALICE_LABEL: alice-5
+      ALICE_URL:   "http://localhost:8105"
+      BATCH_SIZE:  "10"
+      QKDL_URL:    "http://localhost:8043"
+
+  - label:   bob-5
+    role:    receiver
+    module:  nodes.bob.main
+    port:    8205
+    env:
+      BOB_LABEL: bob-5
+      BOB_URL:   "http://localhost:8205"
+      QKDL_URL:  "http://localhost:8043"
+
+
+  - label:   alice-6
+    role:    sender
+    module:  nodes.alice.main
+    port:    8106
+    env:
+      ALICE_LABEL: alice-6
+      ALICE_URL:   "http://localhost:8106"
+      BATCH_SIZE:  "10"
+      QKDL_URL:    "http://localhost:8053"
+
+  - label:   bob-6
+    role:    receiver
+    module:  nodes.bob.main
+    port:    8206
+    env:
+      BOB_LABEL: bob-6
+      BOB_URL:   "http://localhost:8206"
+      QKDL_URL:  "http://localhost:8053"
+
+  - label:   alice-7
+    role:    sender
+    module:  nodes.alice.main
+    port:    8107
+    env:
+      ALICE_LABEL: alice-7
+      ALICE_URL:   "http://localhost:8107"
+      BATCH_SIZE:  "10"
+      QKDL_URL:    "http://localhost:8063"
+
+  - label:   bob-7
+    role:    receiver
+    module:  nodes.bob.main
+    port:    8207
+    env:
+      BOB_LABEL: bob-7
+      BOB_URL:   "http://localhost:8207"
+      QKDL_URL:  "http://localhost:8063"
+
+
+  - label:   alice-8
+    role:    sender
+    module:  nodes.alice.main
+    port:    8108
+    env:
+      ALICE_LABEL: alice-8
+      ALICE_URL:   "http://localhost:8108"
+      BATCH_SIZE:  "10"
+      QKDL_URL:    "http://localhost:8073"
+
+  - label:   bob-8
+    role:    receiver
+    module:  nodes.bob.main
+    port:    8208
+    env:
+      BOB_LABEL: bob-8
+      BOB_URL:   "http://localhost:8208"
+      QKDL_URL:  "http://localhost:8073"
+      
   # Eve  one instance serves all pairs (role=monitor)
   # Start an intercepted session from alice-1:
   #   POST http://localhost:8001/start?receiver_label=bob-1&interceptor_label=eve-1

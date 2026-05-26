@@ -995,3 +995,200 @@ INFO:     Waiting for application shutdown.
 INFO:node.base:[eve-1] Stopped
 INFO:     Application shutdown complete.
 INFO:     Finished server process [942336]
+INFO:     Started server process [1125]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=e71b1b66
+INFO:node.base:[eve-1] Started  node_id=e71b1b66 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1125]
+INFO:     Started server process [3427]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=62551d1b
+INFO:node.base:[eve-1] Started  node_id=62551d1b role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3427]
+INFO:     Started server process [3565]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=a0206b48
+INFO:node.base:[eve-1] Started  node_id=a0206b48 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3565]
+INFO:     Started server process [5418]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=7a7279c7
+INFO:node.base:[eve-1] Started  node_id=7a7279c7 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5418]
+INFO:     Started server process [8834]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=898824d5
+INFO:node.base:[eve-1] Started  node_id=898824d5 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8834]
+INFO:     Started server process [8937]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=a113e5d5
+INFO:node.base:[eve-1] Started  node_id=a113e5d5 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Finished server process [8937]
+INFO:     Started server process [10175]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=69b458be
+INFO:node.base:[eve-1] Started  node_id=69b458be role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     127.0.0.1:33606 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session open — session=87a282e8 n_qubits=32 qkdl=http://localhost:8003 — registering as interceptor
+INFO:httpx:HTTP Request: POST http://localhost:8003/intercept/87a282e8-fd29-4cd2-ae03-3cd95995584a "HTTP/1.1 200 OK"
+INFO:eve:[Eve] *** Registered as interceptor session=87a282e8 qkdl=http://localhost:8003 (attempt 1) ***
+INFO:     127.0.0.1:33612 - "POST /webhook HTTP/1.1" 200 OK
+WARNING:eve:[Eve] Session 87a282e8 completed WITH a key — QBER=0.00%  (Eve's attack may have been too lucky — re-run)
+INFO:httpx:HTTP Request: GET http://localhost:8003/intercept/87a282e8-fd29-4cd2-ae03-3cd95995584a/measurements "HTTP/1.1 200 OK"
+INFO:eve:[Eve] Measurements collected session=87a282e8 n=32 basis_match=19 (59.4%)
+INFO:     127.0.0.1:49632 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session open — session=2f9bb5d1 n_qubits=32 qkdl=http://localhost:8003 — registering as interceptor
+INFO:httpx:HTTP Request: POST http://localhost:8003/intercept/2f9bb5d1-632b-4566-babd-2d3a468e51bc "HTTP/1.1 200 OK"
+INFO:eve:[Eve] *** Registered as interceptor session=2f9bb5d1 qkdl=http://localhost:8003 (attempt 1) ***
+INFO:     127.0.0.1:49638 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session 2f9bb5d1 aborted — reason=QBER_TOO_HIGH QBER=66.67%
+INFO:httpx:HTTP Request: GET http://localhost:8003/intercept/2f9bb5d1-632b-4566-babd-2d3a468e51bc/measurements "HTTP/1.1 200 OK"
+INFO:eve:[Eve] Measurements collected session=2f9bb5d1 n=32 basis_match=16 (50.0%)
+INFO:     127.0.0.1:50162 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session open — session=66388de9 n_qubits=32 qkdl=http://localhost:8003 — registering as interceptor
+INFO:httpx:HTTP Request: POST http://localhost:8003/intercept/66388de9-0e31-49a0-b788-7ba368c2f8fa "HTTP/1.1 200 OK"
+INFO:eve:[Eve] *** Registered as interceptor session=66388de9 qkdl=http://localhost:8003 (attempt 1) ***
+INFO:     127.0.0.1:50174 - "POST /webhook HTTP/1.1" 200 OK
+WARNING:eve:[Eve] Session 66388de9 completed WITH a key — QBER=0.00%  (Eve's attack may have been too lucky — re-run)
+INFO:httpx:HTTP Request: GET http://localhost:8003/intercept/66388de9-0e31-49a0-b788-7ba368c2f8fa/measurements "HTTP/1.1 200 OK"
+INFO:eve:[Eve] Measurements collected session=66388de9 n=32 basis_match=14 (43.8%)
+INFO:     127.0.0.1:51634 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session open — session=16c78894 n_qubits=32 qkdl=http://localhost:8003 — registering as interceptor
+INFO:httpx:HTTP Request: POST http://localhost:8003/intercept/16c78894-02b2-4e83-bf8b-6fa01c6ebc51 "HTTP/1.1 200 OK"
+INFO:eve:[Eve] *** Registered as interceptor session=16c78894 qkdl=http://localhost:8003 (attempt 1) ***
+INFO:     127.0.0.1:51650 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session 16c78894 aborted — reason=QBER_TOO_HIGH QBER=25.00%
+INFO:httpx:HTTP Request: GET http://localhost:8003/intercept/16c78894-02b2-4e83-bf8b-6fa01c6ebc51/measurements "HTTP/1.1 200 OK"
+INFO:eve:[Eve] Measurements collected session=16c78894 n=32 basis_match=21 (65.6%)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10175]
+INFO:     Started server process [10698]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=4d4485de
+INFO:node.base:[eve-1] Started  node_id=4d4485de role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10698]
+INFO:     Started server process [37897]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=53d7551c
+INFO:node.base:[eve-1] Started  node_id=53d7551c role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [37897]
+INFO:     Started server process [41317]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=edff1c4b
+INFO:node.base:[eve-1] Started  node_id=edff1c4b role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [41317]
+INFO:     Started server process [95119]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=8a8e5cf0
+INFO:node.base:[eve-1] Started  node_id=8a8e5cf0 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95119]
+INFO:     Started server process [411006]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=b1003c99
+INFO:node.base:[eve-1] Started  node_id=b1003c99 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [411006]
+INFO:     Started server process [466136]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=76e9a387
+INFO:node.base:[eve-1] Started  node_id=76e9a387 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [466136]
+INFO:     Started server process [1409]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=099d91dc
+INFO:node.base:[eve-1] Started  node_id=099d91dc role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1409]
