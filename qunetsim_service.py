@@ -585,6 +585,47 @@ async def recv_classical(session_id: str):
             return ClassicalRecvResp(session_id=session_id, payload_hex=inbox.pop(0), available=True)
     return ClassicalRecvResp(session_id=session_id, payload_hex="", available=False)
 
+@app.get("/channel/status/{session_id}")
+async def channel_status(session_id: str):
+    """
+    Return the current physical channel state for a session.
+    Callable mid-session by workers or monitoring tools.
+    """
+    with _sessions_lock:
+        session = _sessions.get(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    ch = session.channel
+    report = {
+        "session_id":   session_id,
+        "channel_type": type(ch).__name__,
+        "channel":      ch.describe(),
+    }
+
+    # Decompose QBER budget
+    if hasattr(ch, "qber_floor"):
+        physical_floor = ch.qber_floor()
+        report["qber_budget"] = {
+            "physical_floor":    round(physical_floor, 8),
+            "eve_threshold":     round(max(0.0, 0.11 - physical_floor), 8),
+            # If measured QBER exceeds physical_floor by more than
+            # this margin, the excess is attributable to Eve.
+            "margin_note": (
+                "Eve detectable if measured_QBER > physical_floor + margin"
+            ),
+        }
+
+    # Live detector counters
+    if hasattr(ch, "detector") and ch.detector:
+        report["detector_counters"] = ch.detector.counters()
+
+    # Live OU drift state
+    if hasattr(ch, "drift") and ch.drift and hasattr(ch.drift, "describe"):
+        report["drift_state"] = ch.drift.describe()
+
+    return report
+
 @app.get("/health")
 async def health():
     remaining = _cooldown_remaining()

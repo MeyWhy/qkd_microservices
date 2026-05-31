@@ -128,3 +128,4 @@ Traceback (most recent call last):
     from __future__ import annotations
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 SyntaxError: from __future__ imports must occur at the beginning of the file
+ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8003): address already in use

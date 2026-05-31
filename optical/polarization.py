@@ -238,3 +238,11 @@ class OUDriftChannel:
             "session_qber_estimate":  round(self.session_qber_estimate(), 8),
             "n_steps":                len(self._history),
         }
+
+    def qber_contribution(self) -> float:
+        """
+        QBER contribution from OU drift.
+        Uses the session mean if history exists, otherwise current angle.
+        Delegates to session_qber_estimate() for consistency.
+        """
+        return self.session_qber_estimate()

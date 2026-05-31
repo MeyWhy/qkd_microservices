@@ -5,6 +5,7 @@ import random
 import time
 
 import httpx
+from optical.metrics import decompose_qber, estimate_key_rate
 
 from workers.celery_config import celery_app
 from kme.session_store import load_alice_state, delete_alice_state
@@ -151,6 +152,8 @@ def assemble_and_sift_task(batch_results: list[dict], session_meta: dict) -> dic
         "n_qubits":     n_qubits,
         "sample_seed":  sample_seed,
         "kme_url":      kme_url,
+        "qkdl_url":     session_meta.get("qkdl_url", "http://localhost:8003"),  # ← ADD
+
     }
 
 
@@ -202,6 +205,7 @@ def qber_key_task(sifting_result: dict) -> dict:
             "n_delivered":   sifting_result.get("n_delivered", 0),
             "n_qubits":      sifting_result.get("n_qubits", 0),
             "kme_url":       kme_url,
+            "qkdl_url": qkdl_url,
         }
 
     alice_sifted = sifting_result["alice_sifted"]
@@ -226,6 +230,7 @@ def qber_key_task(sifting_result: dict) -> dict:
             "n_delivered":   n_delivered,
             "n_qubits":      n_qubits,
             "kme_url":       kme_url,
+            "qkdl_url": qkdl_url,
         }
 
     try:
@@ -245,13 +250,40 @@ def qber_key_task(sifting_result: dict) -> dict:
             "n_delivered":   n_delivered,
             "n_qubits":      n_qubits,
             "kme_url":       kme_url,
+            "qkdl_url": qkdl_url,
         }
+    
 
     logger.info(
         f"[QKT] session={session_id[:8]} QBER={qber*100:.2f}% "
         f"threshold={QBER_THRESHOLD*100:.1f}%"
     )
+    # In qber_key_task, after computing qber:
 
+    # Fetch physical floor from QKDL channel status
+    qkdl_url       = sifting_result.get("qkdl_url", "http://localhost:8003")
+    physical_floor = 0.0
+
+    try:
+        r = httpx.get(f"{qkdl_url}/channel/status/{session_id}", timeout=3.0)
+        if r.status_code == 200:
+            physical_floor = r.json().get("qber_budget", {}).get("physical_floor", 0.0)
+    except Exception:
+        pass
+
+    qber_analysis = decompose_qber(qber, physical_floor)
+
+    # Log the decomposition
+    logger.info(
+        f"[QKT] QBER analysis session={session_id[:8]}: "
+        f"measured={qber_analysis['measured']*100:.3f}% "
+        f"physical={qber_analysis['physical']*100:.3f}% "
+        f"eve_estimate={qber_analysis['eve_estimate']*100:.3f}% "
+        f"confidence={qber_analysis['confidence']}"
+    )
+
+    # Include in the key upload payload (extend your existing KeyUpload call)
+    # Add to the metadata / error_message field or extend the model if needed
     if qber > QBER_THRESHOLD:
         logger.warning(
             f"[QKT] QBER_TOO_HIGH session={session_id[:8]} "
@@ -268,6 +300,7 @@ def qber_key_task(sifting_result: dict) -> dict:
             "n_delivered":   n_delivered,
             "n_qubits":      n_qubits,
             "kme_url":       kme_url,
+            "qkdl_url": qkdl_url,
         }
 
     key_final = "".join(map(str, alice_final))
@@ -292,6 +325,7 @@ def qber_key_task(sifting_result: dict) -> dict:
         "n_delivered":   n_delivered,
         "n_qubits":      n_qubits,
         "kme_url":       kme_url,
+        "qkdl_url": qkdl_url,
     }
 
 
