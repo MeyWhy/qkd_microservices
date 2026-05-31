@@ -188,7 +188,8 @@ def qber_key_task(sifting_result: dict) -> dict:
     """
     session_id = sifting_result["session_id"]
     kme_url    = sifting_result.get("kme_url", KME_URL).rstrip("/")
-
+    qkdl_url   = sifting_result.get("qkdl_url", "http://localhost:8003") 
+    
     if sifting_result.get("error"):
         logger.warning(
             f"[QKT] Upstream error session={session_id[:8]}: "
@@ -261,7 +262,6 @@ def qber_key_task(sifting_result: dict) -> dict:
     # In qber_key_task, after computing qber:
 
     # Fetch physical floor from QKDL channel status
-    qkdl_url       = sifting_result.get("qkdl_url", "http://localhost:8003")
     physical_floor = 0.0
 
     try:

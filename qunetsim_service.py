@@ -89,7 +89,10 @@ class NetworkSession:
         self.loss_rate   = loss_rate
 
         if distance_km > 0.0:
-            self.channel = FiberChannel(distance_km)
+            self.channel = FiberChannel(
+                distance_km=distance_km,
+                csv_path="optical/data/attenuation_table.csv",  
+            )  
         else:
             self.channel = StatisticalChannel(loss_rate)
 
