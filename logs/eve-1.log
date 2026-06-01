@@ -22,3 +22,55 @@ INFO:     Waiting for application shutdown.
 INFO:node.base:[eve-1] Stopped
 INFO:     Application shutdown complete.
 INFO:     Finished server process [2966]
+INFO:     Started server process [935]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=1dd07e36
+INFO:node.base:[eve-1] Started  node_id=1dd07e36 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [935]
+INFO:     Started server process [2142]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=9df88df2
+INFO:node.base:[eve-1] Started  node_id=9df88df2 role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2142]
+INFO:     Started server process [2173]
+INFO:     Waiting for application startup.
+INFO:httpx:HTTP Request: POST http://localhost:8000/nodes/register "HTTP/1.1 200 OK"
+INFO:node.base:[eve-1] Registered → node_id=bbff955a
+INFO:node.base:[eve-1] Started  node_id=bbff955a role=monitor
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56090 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session open — session=114c5383 n_qubits=1024 qkdl=http://localhost:8003 — registering as interceptor
+INFO:httpx:HTTP Request: POST http://localhost:8003/intercept/114c5383-7138-476a-820b-d3d6c6de034f "HTTP/1.1 200 OK"
+INFO:eve:[Eve] *** Registered as interceptor session=114c5383 qkdl=http://localhost:8003 (attempt 1) ***
+INFO:     127.0.0.1:36730 - "POST /webhook HTTP/1.1" 200 OK
+WARNING:eve:[Eve] Session 114c5383 completed WITH a key — QBER=0.00%  (Eve's attack may have been too lucky — re-run)
+INFO:httpx:HTTP Request: GET http://localhost:8003/intercept/114c5383-7138-476a-820b-d3d6c6de034f/measurements "HTTP/1.1 200 OK"
+INFO:eve:[Eve] Measurements collected session=114c5383 n=81 basis_match=46 (56.8%)
+INFO:     127.0.0.1:55410 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session open — session=ab247b89 n_qubits=1024 qkdl=http://localhost:8003 — registering as interceptor
+INFO:httpx:HTTP Request: POST http://localhost:8003/intercept/ab247b89-7fd4-4847-8368-c43bd59b99db "HTTP/1.1 200 OK"
+INFO:eve:[Eve] *** Registered as interceptor session=ab247b89 qkdl=http://localhost:8003 (attempt 1) ***
+INFO:     127.0.0.1:54430 - "POST /webhook HTTP/1.1" 200 OK
+INFO:eve:[Eve] Session ab247b89 aborted — reason=QBER_TOO_HIGH QBER=37.50%
+INFO:httpx:HTTP Request: GET http://localhost:8003/intercept/ab247b89-7fd4-4847-8368-c43bd59b99db/measurements "HTTP/1.1 200 OK"
+INFO:eve:[Eve] Measurements collected session=ab247b89 n=80 basis_match=45 (56.2%)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:node.base:[eve-1] Stopped
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2173]
