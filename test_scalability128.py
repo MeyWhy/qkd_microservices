@@ -8,14 +8,10 @@ What it does
 1. Generates (or updates) nodes/network.yaml with exactly MAX_PAIRS
    alice/bob pairs, following the canonical port scheme:
 
-     Pair  1 : alice=8001  bob=8002  QKDL=8003
-     Pair  2 : alice=8102  bob=8202  QKDL=8013
-     …
-     Pair  8 : alice=8108  bob=8208  QKDL=8073
-     Pair  9 : alice=8109  bob=8209  QKDL=9003
-     Pair 10 : alice=8110  bob=8210  QKDL=9013
-     …
-     Pair 32 : alice=8132  bob=8232  QKDL=9233
+     Pair   1      : alice=8001   bob=8002   QKDL=8003
+     Pairs  2–8    : alice=8100+n bob=8200+n QKDL=8003+(n-1)*10
+     Pairs  9–32   : alice=8100+n bob=8200+n QKDL=9003+(n-9)*10
+     Pairs 33–128  : alice=8300+n bob=8500+n QKDL=8700+n
 
    If the YAML already matches MAX_PAIRS no file is written.
    If it changed, the script prints a reminder to restart node_runner
@@ -32,7 +28,7 @@ What it does
 
 Parameters (env vars or edit the defaults below)
 -------------------------------------------------
-MAX_PAIRS           Pairs to configure and test   (default 32, max 32)
+MAX_PAIRS           Pairs to configure and test   (default 32, max 128)
 N_QUBITS            Qubits per session             (default 1024)
 BATCH_SIZE          Batch size                     (default 10)
 POLL_INTERVAL_S     Seconds between KME polls      (default 5)
@@ -69,7 +65,7 @@ import yaml
 # Configuration
 # ---------------------------------------------------------------------------
 
-MAX_PAIRS         = min(int(os.getenv("MAX_PAIRS",          "32")), 32)
+MAX_PAIRS         = min(int(os.getenv("MAX_PAIRS",         "32")), 128)
 N_QUBITS          = int(os.getenv("N_QUBITS",               "1024"))
 BATCH_SIZE        = int(os.getenv("BATCH_SIZE",             "10"))
 POLL_INTERVAL_S   = float(os.getenv("POLL_INTERVAL_S",      "5"))
@@ -102,15 +98,23 @@ def pair_ports(n: int) -> tuple[int, int, int]:
     """
     Return (alice_port, bob_port, qkdl_port) for pair number n (1-based).
 
-    Pairs 1–8  use QKDL ports 8003–8073 (existing range).
-    Pairs 9–32 use QKDL ports 9003–9233 (new range, no conflicts).
+    Port blocks — no conflicts across all 128 pairs (verified):
+
+      Pair   1       alice=8001   bob=8002   qkdl=8003
+      Pairs  2–8     alice=8100+n bob=8200+n qkdl=8003+(n-1)*10  (8013–8073)
+      Pairs  9–32    alice=8100+n bob=8200+n qkdl=9003+(n-9)*10  (9003–9233)
+      Pairs 33–128   alice=8300+n bob=8500+n qkdl=8700+n         (8733–8828)
     """
-    if n < 1 or n > 32:
-        raise ValueError(f"Pair number must be 1–32, got {n}")
-    alice = 8001        if n == 1 else 8100 + n
-    bob   = 8002        if n == 1 else 8200 + n
-    qkdl  = (8003 + (n - 1) * 10) if n <= 8 else (9003 + (n - 9) * 10)
-    return alice, bob, qkdl
+    if n < 1 or n > 128:
+        raise ValueError(f"Pair number must be 1–128, got {n}")
+    if n == 1:
+        return 8001, 8002, 8003
+    elif n <= 8:
+        return 8100 + n, 8200 + n, 8003 + (n - 1) * 10
+    elif n <= 32:
+        return 8100 + n, 8200 + n, 9003 + (n - 9) * 10
+    else:                          # 33 – 128
+        return 8300 + n, 8500 + n, 8700 + n
 
 
 def pair_info(n: int) -> dict:
@@ -163,7 +167,7 @@ def _pair_yaml_block(n: int) -> list[str]:
 
 def generate_network_yaml(n_pairs: int) -> str:
     """
-    Build the full network.yaml content for n_pairs pairs (1 ≤ n ≤ 32).
+    Build the full network.yaml content for n_pairs pairs (1 ≤ n ≤ 128).
     Includes eve-1 at the end.
     """
     lines = [
