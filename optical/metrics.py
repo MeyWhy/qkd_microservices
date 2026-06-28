@@ -11,6 +11,7 @@ import math
 def decompose_qber(
     measured_qber:    float,
     physical_floor:   float,
+    source_breakdown: dict | None = None,
 ) -> dict:
   
     eve_estimate = max(0.0, measured_qber - physical_floor)
@@ -30,13 +31,18 @@ def decompose_qber(
     else:
         confidence = "clean"
 
-    return {
+    result= {
         "measured":       round(measured_qber, 6),
         "physical":       round(physical_floor, 6),
         "eve_estimate":   round(eve_estimate, 6),
         "eve_detectable": eve_estimate >= SUSPICION_THRESHOLD,
         "confidence":     confidence,
     }
+    if source_breakdown is not None:
+        result["physical_breakdown"] = {
+            k: round(v, 8) for k, v in source_breakdown.items()
+        }
+    return result
 
 
 def estimate_key_rate(
@@ -99,8 +105,9 @@ def session_report(
     n_qubits       = session_data.get("n_qubits", 0)
     n_delivered    = session_data.get("n_delivered", 0)
     n_sifted       = session_data.get("n_sifted", 0)
+    source_breakdown= channel_describe.get("qber_breakdown")
 
-    qber_breakdown = decompose_qber(measured_qber, physical_floor)
+    qber_breakdown = decompose_qber(measured_qber, physical_floor, source_breakdown)
     key_rate       = estimate_key_rate(
         n_qubits=n_qubits,
         transmission=transmission,

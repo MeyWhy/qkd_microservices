@@ -15,7 +15,11 @@ except ImportError:
 
 _DATA_DIR    = Path(__file__).parent / "data"
 _DEFAULT_CSV = _DATA_DIR / "attenuation_table.csv"
+_DEFAULT_PMD_CSV= _DATA_DIR / "pmd_table.csv"
 
+#speed of light used for optical carrier frequency at 1550nm
+_C_M_PER_S = 299_792_458.0
+_DEFAULT_WAVELENGTH_NM = 1550.0
 
 def _linear_interp(xs: list[float], ys: list[float]) -> Callable[[float], float]:
  
@@ -38,15 +42,22 @@ def _linear_interp(xs: list[float], ys: list[float]) -> Callable[[float], float]
 
 
 class ChannelModel:
-
+    #bridges between ansys exported csv tables and bb84 simulator
+    #now has 2 inde physical effects: attenuation (T(d)) and PMD QBER floor Q_pmd(d)
     def __init__(
         self,
         csv_path:       str | Path = _DEFAULT_CSV,
-        pmd_csv_path:   str | Path | None = None,
+        pmd_csv_path:   str | Path | None = _DEFAULT_PMD_CSV,
         alpha_fallback: float = 0.2,
+        source_linewidth_ghz: float = 50.0,
+        wavelength_nm:  float= _DEFAULT_WAVELENGTH_NM,
     ):
         self._alpha_fallback = alpha_fallback
-        self._pmd_fn: Callable[[float], float] | None = None
+        self._dgd_fn: Callable[[float], float] | None = None
+        self._wavelength_nm= wavelength_nm
+        self._source_linewidth_ghz=source_linewidth_ghz
+        self._tau_c_ps= 1.0 / (math.pi * source_linewidth_ghz * 1e9) * 1e12 if source_linewidth_ghz > 0 else math.inf
+        self._pmd_csv_path: Path | None = None
 
         # --- Load attenuation table ---
         csv_path = Path(csv_path)
@@ -67,14 +78,11 @@ class ChannelModel:
         # Load PMD table
         if pmd_csv_path is not None:
             pmd_path = Path(pmd_csv_path)
-            pmd_d, pmd_phi = self._load_pmd_csv(pmd_path)
+            pmd_d, pmd_dgd = self._load_pmd_csv(pmd_path)
             if pmd_d:
-                phi_fn        = self._build_interp(pmd_d, pmd_phi)
+                self._dgd_fn= self._build_interp(pmd_d, pmd_dgd)
                 # P(flip) = sin²(Δφ/2) - standard Malus-law QBER from phase shift
-                self._pmd_fn  = lambda d: math.sin(phi_fn(d) / 2) ** 2
-            else:
-                self._pmd_fn  = None
-
+                self._pmd_csv_path=pmd_path
     def transmission_prob(self, distance_km: float) -> float:
         """
         Fraction of photons expected to survive at this distance.
@@ -86,7 +94,16 @@ class ChannelModel:
         if distance_km <= 0:
             return 1.0
         return max(0.0, min(1.0, self._T_fn(distance_km)))
-
+    
+    def dgd_ps(self, distance_km: float) -> float:
+        """
+        Differential group delay at this distance, in picoseconds.
+        0.0 if no PMD table was loaded.
+        """
+        if self._dgd_fn is None or distance_km<=0:
+            return 0.0
+        return max(0.0, self._dgd_fn(distance_km))
+    
     def qber_floor(self, distance_km: float = 0.0) -> float:
         """
         Physical QBER floor from polarization drift at this distance.
@@ -94,9 +111,13 @@ class ChannelModel:
         Step 1: returns 0.0 (no PMD model loaded yet).
         Step 3: returns sin²(Δφ/2) from the PMD CSV.
         """
-        if self._pmd_fn is None:
+        if self._dgd_fn is None:
             return 0.0
-        return max(0.0, min(0.5, self._pmd_fn(distance_km)))
+        dgd=self.dgd_ps(distance_km)
+        if dgd<=0 or math.isinf(self._tau_c_ps):
+            return 0.0
+        ratio=dgd/self._tau_c_ps
+        return 0.5*(1.0 - math.exp(-(ratio**2)))
 
     def describe(self, distance_km: float = 0.0) -> dict:
         return {
@@ -110,7 +131,14 @@ class ChannelModel:
             ),
             "qber_floor":        self.qber_floor(distance_km),
             "max_distance_km":  self.max_distance_km,
-            "pmd_loaded":       self._pmd_fn is not None,
+            "pmd_loaded":       self._dgd_fn is not None,
+            "pmd_csv_path":     str(self._pmd_csv_path) if self._pmd_csv_path else None,
+            "pmd":{
+                "dgd_ps":       round (self.dgd_ps(distance_km), 6),
+                "tau_c_ps":     round(self._tau_c_ps, 6) if not math.isinf(self._tau_c_ps) else None,
+                "source_linewidth_ghz": self._source_linewidth_ghz,
+                "wavelength_nm":    self._wavelength_nm,
+            },
             "scipy_used":       _SCIPY_AVAILABLE,
         }
     @staticmethod
@@ -133,21 +161,22 @@ class ChannelModel:
 
     @staticmethod
     def _load_pmd_csv(path: Path) -> tuple[list[float], list[float]]:
-        """Load distance_km and delta_phi_rad columns from PMD CSV."""
+        """Load distance_km and dgd_ps columns from PMD CSV."""
         if not path.exists():
             return [], []
-        distances, phis = [], []
+        distances, dgds = [], []
         try:
             with open(path, newline="") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     d   = float(row["distance_km"])
-                    phi = float(row["delta_phi_rad"])
-                    distances.append(d)
-                    phis.append(phi)
+                    dgd = float(row["dgd_ps"])
+                    if d>=0 and dgd>=0:
+                        distances.append(d)
+                        dgds.append(dgd)
         except Exception:
             return [], []
-        return distances, phis
+        return distances, dgds
 
     @staticmethod
     def _build_interp(xs: list[float], ys: list[float]) -> Callable[[float], float]:

@@ -32,6 +32,8 @@ class FiberChannel:
         dead_time_ns:    float = 50.0,
         #Ansys CSV source (either a path or a pre-built model)
         csv_path:        str | None = None,
+        pmd_csv_path:   str | None= None,
+        source_linewidth_ghz: float = 50.0,
         channel_model=   None,   #ChannelModel instance or None
     ):
         if distance_km < 0:
@@ -47,7 +49,7 @@ class FiberChannel:
             self._transmission  = channel_model.transmission_prob(distance_km)
         elif csv_path is not None:
             from .channel_model import ChannelModel
-            self._channel_model = ChannelModel(csv_path)
+            self._channel_model = ChannelModel(csv_path, pmd_csv_path, source_linewidth_ghz,)
             self._transmission  = self._channel_model.transmission_prob(distance_km)
         else:
             #Analytical fallback (same formula as before)
@@ -120,7 +122,29 @@ class FiberChannel:
             if self._channel_model else 0.0
         )
         return drift_qber + detector_qber + pmd_floor
-
+    def qber_breakdown(self) -> dict:
+        """
+        Decompose the total physical QBER floor into its named sources.
+        Useful for ablation figures: which noise source dominates at
+        which distance.
+        """
+        drift_qber    = self.drift.qber_contribution() if self.drift else 0.0
+        detector_qber = (
+            self.detector.qber_contribution(self._transmission)
+            if self.detector else 0.0
+        )
+        pmd_floor = (
+            self._channel_model.qber_floor(self.distance_km)
+            if self._channel_model else 0.0
+        )
+        total = drift_qber + detector_qber + pmd_floor
+        return {
+            "drift_qber":    drift_qber,
+            "detector_qber": detector_qber,
+            "pmd_qber":      pmd_floor,
+            "total_qber":    total,
+        }
+ 
     def reset_session(self) -> None:
         if self.detector:
             self.detector.reset_counters()
@@ -135,6 +159,7 @@ class FiberChannel:
             "transmission_prob": self._transmission,
             "loss_db":           round(self.alpha_db_per_km * self.distance_km, 3),
             "qber_floor":        self.qber_floor(),
+            "qber_breakdown":   self.qber_breakdown(),
             "ansys_csv_loaded":  self._channel_model is not None,
         }
         if self._channel_model:

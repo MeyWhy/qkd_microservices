@@ -9,9 +9,13 @@ from pathlib import Path
 ALPHA_DB_PER_KM_DEFAULT = 0.2   # dB/km
 DISTANCE_RANGE_KM       = list(range(0, 130, 10))  # 0, 10, 20, ..., 120 km
 
+#coeff du pmd
+D_PMD_PS_PER_SQRT_KM_DEFAULT = 0.1   # ps / sqrt(km)
+
 # Default output location — sibling to this file
 _DATA_DIR     = Path(__file__).parent / "data"
 _DEFAULT_CSV  = _DATA_DIR / "attenuation_table.csv"
+_DEFAULT_PMD_CSV = _DATA_DIR / "pmd_table.csv"
 
 
 def _transmission(distance_km: float, alpha: float = ALPHA_DB_PER_KM_DEFAULT) -> float:
@@ -51,6 +55,122 @@ def generate_synthetic_csv(
 
     return output_path
 
+def _dgd_ps(distance_km: float, d_pmd: float = D_PMD_PS_PER_SQRT_KM_DEFAULT) -> float:
+    """
+    Differential group delay from the standard sqrt(length) PMD scaling
+    for fiber with random mode coupling:
+        DGD(d) = D_PMD * sqrt(d)
+    At D_PMD=0.1 ps/sqrt(km) (SMF-28-class, ITU-T G.652):
+      10 km  -> DGD ≈ 0.32 ps
+      50 km  -> DGD ≈ 0.71 ps
+     100 km  -> DGD ≈ 1.00 ps
+    """
+    if distance_km <= 0:
+        return 0.0
+    return d_pmd * math.sqrt(distance_km)
+ 
+ 
+def generate_synthetic_pmd_csv(
+    output_path:    str | Path = _DEFAULT_PMD_CSV,
+    d_pmd_ps_per_sqrt_km: float = D_PMD_PS_PER_SQRT_KM_DEFAULT,
+    distances_km:   list[int] = None,
+    overwrite:      bool = False,
+) -> Path:
+    """
+    Generate a synthetic PMD table (distance_km, dgd_ps), standing in for
+    a real Ansys/lab-measured DGD sweep until one is available. Swap the
+    CSV file for a measured one later — ChannelModel's interface doesn't
+    change.
+    """
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+ 
+    if output_path.exists() and not overwrite:
+        return output_path
+ 
+    distances = distances_km or DISTANCE_RANGE_KM
+ 
+    with open(output_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["distance_km", "dgd_ps"])
+        for d in distances:
+            dgd = _dgd_ps(d, d_pmd_ps_per_sqrt_km)
+            writer.writerow([d, f"{dgd:.6f}"])
+ 
+    return output_path
+ 
+ 
+def validate_pmd_csv(csv_path: str | Path) -> dict:
+    """
+    Validate a PMD CSV: correct columns, non-negative DGD, monotonically
+    non-decreasing with distance (sqrt scaling is monotonic by construction).
+    """
+    csv_path = Path(csv_path)
+    issues: list[str] = []
+ 
+    if not csv_path.exists():
+        return {"valid": False, "rows": 0, "issues": [f"File not found: {csv_path}"], "summary": {}}
+ 
+    rows: list[dict] = []
+    try:
+        with open(csv_path, newline="") as f:
+            reader = csv.DictReader(f)
+            if "distance_km" not in (reader.fieldnames or []):
+                issues.append("Missing column: distance_km")
+            if "dgd_ps" not in (reader.fieldnames or []):
+                issues.append("Missing column: dgd_ps")
+            if issues:
+                return {"valid": False, "rows": 0, "issues": issues, "summary": {}}
+            for i, row in enumerate(reader):
+                try:
+                    rows.append({
+                        "distance_km": float(row["distance_km"]),
+                        "dgd_ps":      float(row["dgd_ps"]),
+                    })
+                except ValueError:
+                    issues.append(f"Row {i+2}: non-numeric value: {row}")
+    except Exception as e:
+        return {"valid": False, "rows": 0, "issues": [str(e)], "summary": {}}
+ 
+    if not rows:
+        issues.append("CSV has no data rows")
+        return {"valid": False, "rows": 0, "issues": issues, "summary": {}}
+ 
+    prev_d = prev_dgd = None
+    for row in rows:
+        d, dgd = row["distance_km"], row["dgd_ps"]
+        if d < 0:
+            issues.append(f"Negative distance: {d}")
+        if dgd < 0:
+            issues.append(f"Negative DGD at d={d}: {dgd}")
+        if prev_d is not None and d <= prev_d:
+            issues.append(f"Distances not strictly increasing: {prev_d} → {d}")
+        if prev_dgd is not None and dgd < prev_dgd - 1e-9:
+            issues.append(f"DGD decreased at d={d}: {prev_dgd:.6f} → {dgd:.6f} (should be non-decreasing)")
+        prev_d, prev_dgd = d, dgd
+ 
+    distances = [r["distance_km"] for r in rows]
+    dgds      = [r["dgd_ps"]      for r in rows]
+ 
+    # Implied D_PMD from the last point: DGD = D_PMD * sqrt(d)
+    implied_d_pmd = (
+        round(dgds[-1] / math.sqrt(distances[-1]), 6)
+        if distances[-1] > 0 and dgds[-1] > 0
+        else None
+    )
+ 
+    return {
+        "valid":   len(issues) == 0,
+        "rows":    len(rows),
+        "issues":  issues,
+        "summary": {
+            "min_distance_km":          min(distances),
+            "max_distance_km":          max(distances),
+            "max_dgd_ps":               max(dgds),
+            "implied_d_pmd_ps_per_sqrt_km": implied_d_pmd,
+        },
+    }
+ 
 
 def validate_csv(csv_path: str | Path) -> dict:
 
@@ -158,6 +278,15 @@ if __name__ == "__main__":
     print(f"Generated: {path}")
     print_table(path)
 
+    pmd_path = generate_synthetic_pmd_csv(overwrite=True)
+    print(f"Generated: {pmd_path}")
+    pmd_result=validate_pmd_csv(pmd_path)
+    print(f"\nPMD table valid: {pmd_result['valid']}")
+    if pmd_result["valid"]:
+        s = pmd_result["summary"]
+        print(f"  Implied D_PMD = {s['implied_d_pmd_ps_per_sqrt_km']} ps/√km")
+        print(f"  Max DGD = {s['max_dgd_ps']:.4f} ps at {s['max_distance_km']} km")
+        
     """
  Ansys attenuation table generator / validator.
 

@@ -4,10 +4,9 @@ import os
 import time
 from typing import Optional
 
-import httpx
 import redis
 
-from models import NodeInfo, NodeRole, NodeRegistration, WebhookEvent
+from models import NodeInfo, NodeRole, NodeRegistration
 
 logger = logging.getLogger("kme.registry")
 REDIS_URL   = os.getenv("REDIS_URL", "redis://localhost:6379/0")
@@ -68,20 +67,16 @@ def list_nodes(r: redis.Redis,
     return nodes
 
 
-#webhook delivery: utilise pour echange of notifs entre nodes instead of pooling pour eviter http connect a chaque fois
-
-async def notify_node(node: NodeInfo, event: WebhookEvent) -> bool:
-    try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            resp = await client.post(
-                node.callback_url,
-                json=event.model_dump(),
-            )
-            resp.raise_for_status()
-            return True
-    except Exception as e:
-        logger.warning(
-            f"[Registry] Webhook failed → {node.label} "
-            f"({node.callback_url}): {e}"
-        )
-        return False
+#NOTE: notify_node() has been removed. It performed an httpx POST to a
+#node's callback_url ("/webhook") — the push-based delivery path that this
+#migration replaces entirely with kme/event_bus.py's Redis Streams
+#publish_event()/NodeStreamConsumer pull-based model (see kme/event_bus.py
+#module docstring for the full rationale). callback_url is still accepted
+#on NodeRegistration and stored for backward-compatible logging/dashboards,
+#but the KME no longer dials it for anything.
+#
+#kme/message_bus.py (the old, never-wired-in Pub/Sub MessageBus/
+#NodeSubscriber) is likewise superseded by kme/event_bus.py and should be
+#considered dead code — left in place only so a `git log` / diff shows the
+#exact migration path rather than a silent deletion. Safe to delete once
+#this migration is confirmed working end-to-end.
